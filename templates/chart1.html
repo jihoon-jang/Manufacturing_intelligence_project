@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+
+    </script>
+	<script src="{% static 'js/Chart.min.js' %}"></script>
+	<script src="{% static 'js/utils.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+
+    {% include "navbar.html" %}
+
+    <main id="main">
+
+            <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>Chart</h2>
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li>Chart</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+        <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>Chart</h2>
+          <p>월별 계획, 실적 차트(계획 차트는 데이터 부족으로 07년으로 대체)</p>
+        </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="200">
+            <div id="container" style="width: 75%;">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+
+          <div class="row" data-aos="fade-up" data-aos-delay="200">
+          </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+    </main>
+    {% include "footer.html" %}
+
+		<script>
+		var chartData = {
+			labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			datasets: [{
+				type: 'line',
+				label: '계획',
+				borderColor: window.chartColors.blue,
+				borderWidth: 2,
+				fill: false,
+				lineTension: 0,
+				data: [
+				{% for data in plan07Data %}
+				'{{data}}',
+                {% endfor %}
+				]
+			}, {
+				type: 'bar',
+				label: '실적',
+				backgroundColor: window.chartColors.red,
+				data: [
+				{% for data in result07Data %}
+				'{{data}}',
+                {% endfor %}
+				],
+				borderColor: 'white',
+				borderWidth: 2
+			}]
+
+		};
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myMixedChart = new Chart(ctx, {
+				type: 'bar',
+				data: chartData,
+				options: {
+					responsive: true,
+					title: {
+						display: false,
+						text: '년도별 판매실적 추이 분석 차트.'
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: true
+					}
+				}
+			});
+		};
+
+	</script>
+{% endblock %}

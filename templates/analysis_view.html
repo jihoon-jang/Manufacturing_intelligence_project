@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+
+
+{% include "navbar.html" %}
+
+  <main id="main">
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li><a href="/analysis">Analysis</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Our Skills Section ======= -->
+    <section class="skills" data-aos="fade-up">
+    <div class="container">
+
+        <div class="section-title">
+          <h2>분석 상세보기</h2>
+          <p>분석 > > >...</p>
+        </div>
+        <div class="section-title">
+            {% if not rsDetail %}
+                <p class="text-center">내용이 없습니다! </p>
+            {% endif %}
+
+            {% for i in rsDetail %}
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr style="height:45px;border-top:solid 1px #dddddd;">
+                        <td width="20%" align="center">제목</td>
+                        <td width="80%">{{ i.a_title }} </td>
+                    </tr>
+                    <tr style="height:45px;border-top:solid 1px #dddddd;">
+                        <td width="20%" align="center">작성자</td>
+                        <td width="80%">{{ i.a_owner }} </td>
+                    </tr>
+                    <tr style="height:45px;border-top:solid 1px #dddddd;">
+                        <td width="20%" align="center">내용</td>
+                        <td width="80%">{{ i.a_note }} </td>
+                    </tr>
+                    <tr style="height:60px;border-top:solid 1px #dddddd;" align="center">
+                        <td width="100%" colspan="2">
+                            <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="location.href='/analysis'">목록</button>
+                        </td>
+                    </tr>
+                </table>
+            {% endfor %}
+
+        </div>
+    </div>
+    </section><!-- End Our Skills Section -->
+
+  </main><!-- End #main -->
+
+{% include "footer.html" %}
+{% endblock %}
+

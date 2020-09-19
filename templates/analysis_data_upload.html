@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block body %}
+{% include "navanalysis.html" %}
+
+
+    <div class="container mt-5">
+    <div style="margin:20px 0;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td width="50%" style="padding:3px 5px;text-align:left;">
+                </td>
+                <td width="50%" align="right">
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="location.href='/analysis_data?step_no={{ step_no }}&a_no={{ a_no }}'">목록</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <div style="margin:20px 0;text-align:center;">
+
+        <form action="{% url "data_column_upload_csv" %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file"
+                   title="Upload excel file"
+                   name="excel_file"
+                   style="border: 1px solid black; padding: 5px;"
+                   required="required">
+            <br><br>
+            <p><input type="submit" value="Read"></p>
+            <input type="hidden" name="a_no" id="a_no" value="{{ a_no }}">
+            <input type="hidden" name="step_no" id="step_no" value="{{ step_no }}">
+        </form>
+        <hr>
+
+        <table width="100%" border="1">
+        {% for row in excel_data %}
+            <tr>
+            {% for cell in row %}
+               <td> {{ cell }} </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    </div>
+{% endblock %}

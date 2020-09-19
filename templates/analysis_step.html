@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% csrf_token %}
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+
+    var xhr;
+
+    // Ajax로 제목 수정하기
+    function updateStep(elem) {
+        var sno = elem.getAttribute("sno");
+        var stitle = elem.value;
+
+        //if (confirm("Update 하시겠습니까?") == false) {
+        //    return false;
+        //}
+
+        var strurl = "/step_update?step_no=" + sno + "&step_title=" + stitle;
+        //console.log(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                elem.style.backgroundColor = "#E8E8E8";
+                //alert(data.result_msg);
+
+            }
+
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    function analysisStepGenerate() {
+
+        if (confirm("분석 단계를 생성 하시겠습니까?") == false) {
+            return false;
+        }
+
+        atitle = document.getElementById("a_title").value;
+        ano = document.getElementById("a_no").value;
+
+        var strsql = '/step_generate?a_no=' + ano + '&a_title=' + atitle;
+        //alert(strsql);
+
+        location.href = strsql;
+
+    }
+
+    function analysisRun(elem) {
+
+        if (confirm("분석CODE 실행 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var ano = document.getElementById("a_no").value;
+        var sno = elem.getAttribute("sno");
+        var ufile = elem.getAttribute("ufile");
+
+        var strurl = '/analysis_run?a_no=' + ano + '&step_no=' + sno + '&upload_file=' + ufile;
+        //alert(strurl);
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                var obj = JSON.parse(data);
+                alert(obj.result_msg);
+
+            }
+
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+
+    }
+
+    function analysisQuery() {
+
+        tno = document.getElementById("analysis_type").value;
+        location.href = '/analysis?type_no=' + tno;
+
+    }
+
+    // Jquery AJAX 테스트 중
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $("button").click(function(e){
+
+        alert("1");
+        e.preventDefault();
+        var ano = $(this).find('input').val();
+        $.ajax({
+            type: "POST",
+            url: "/analysis_toggle",
+            method: "POST",
+            data: {'ano': ano },
+            contentType: "application/json",
+            beforeSend: function () {
+                alert("Before Send")
+            },
+            success: function () {
+                alert("Success");
+                alert(response.result_msg);
+            },
+            error: function () {
+                alert("Error")
+            }
+        });
+
+    });
+
+    </script>
+{% endblock %}
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+  <main id="main">
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li><a href="/analysis">Analysis</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Our Skills Section ======= -->
+    <section class="skills" data-aos="fade-up">
+    <div class="container">
+
+        <div class="section-title">
+          <h2>단계별 분석</h2>
+          <p>분석단계생성 > 데이터 설정 및 처리, 분석 Template clone > 분석파일 업로드 > 분석 실행</p>
+        </div>
+
+        <div class="section-title">
+
+            <input type="hidden" id="a_no" value="{{ a_no }}" />
+            <input type="hidden" id="a_title" value="{{ a_title }}" />
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="30%" align="center" style="padding:3px 5px;">
+                    </td>
+                    <td width="60%" align="right" style="padding:3px 5px;">
+                        {{ a_no }} . {{ a_title }}
+                    </td>
+                    <td width="20%">
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="analysisStepGenerate();">GENERATE</button>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div class="section-title">
+
+        {% if not rsStep %}
+        <p class="text-center">내용이 없습니다! </p>
+        {% endif %}
+
+        {% for i in rsStep %}
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr style="border-top:solid 1px #dddddd;">
+                    <td width="5%" align="right"><b>S{{ i.step_no }}</b> . </td>
+                    <td width="41%">
+                        <input type="text" sno="{{ i.step_no }}" id="title_{{ i.step_no }}" value="{{ i.step_title }}" style="width:95%;border:solid 1px #e8e8e8;" onchange="updateStep(this)" />
+                    </td>
+                    <td width="32%" align="center" style="padding:5px 0;white-space:nowrap;">
+                        {% if i.reporting_cnt > 0 %}
+                        <a href="/analysis_data?a_no={{ a_no }}&step_no={{ i.step_no }}">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" >META</button></a>
+                        {% else %}
+                        <a href="/analysis_data?a_no={{ a_no }}&step_no={{ i.step_no }}">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" >META</button></a>
+                        {% endif %}
+
+                        <a href="/analysis_upload?a_no={{ a_no }}&step_no={{ i.step_no }}"><button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;">DATA</button></a>
+                        <a href="/analysis_code?a_no={{ a_no }}&step_no={{ i.step_no }}"><button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;">CODE</button></a>
+                        <a href="#"><button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;">PICK</button></a>
+
+                    </td>
+                    <td width="10%" align="center">
+                        {% if i.upload_cnt > 0 %}
+                            <span class="btn btn-outline-primary" sno="{{ i.step_no }}" ufile="{{ i.upload_file }}" onclick="analysisRun(this);"><i class="icofont-play-alt-1"></i></span>
+                        {% else %}
+                            <span class="btn btn-outline-dark" ><i class="icofont-play-alt-1"></i></span>
+                        {% endif %}
+                    </td>
+
+                    <td width="4%">
+                        <i class="icofont-search-document" onclick="#"></i>
+                    </td>
+                    <td width="4%">
+                        <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                    </td>
+                    <td width="4%" align="right" style="padding:5px 10px 5px 0;">
+                        <i class="icofont-cut"></i>
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+
+        </div>
+
+    </div>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr style="height:120px;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;"></td>
+                    <td width="70%" align="left" style="padding-left:5px;"></td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" >GENERATE</button>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">분석단계 생성</td>
+                    <td width="70%" align="left" style="padding-left:5px;">분석에 대하여 분석단계를 생성, 명칭은 자동 부여 후 리스트에서 수정</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" >META</button>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Meta</td>
+                    <td width="70%" align="left" style="padding-left:5px;">
+                        메타정의, 테이블 생성
+                    </td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;">DATA</button>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">DATA</td>
+                    <td width="70%" align="left" style="padding-left:5px;">
+
+                        데이터 처리</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;">CODE</button>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">분석CODE</td>
+                    <td width="70%" align="left" style="padding-left:5px;">
+                        분석CODE 파일 업로드 (Python 파일)</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"><i class="icofont-play-alt-1" aria-hidden="true"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">실행</td>
+                    <td width="70%" align="left" style="padding-left:5px;">분석파일 실행</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <i class="icofont-search-document"></i>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">보기</td>
+                    <td width="70%" align="left" style="padding-left:5px;">분석단계 설명 (작업중)</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Clone</td>
+                    <td width="70%" align="left" style="padding-left:5px;">템플릿 가져오기 (작업중)</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <i class="icofont-cut"></i>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">삭제</td>
+                    <td width="70%" align="left" style="padding-left:5px;"></td>
+                </tr>
+            </table>
+
+        </div>
+
+      </div>
+
+    </section><!-- End Our Skills Section -->
+
+  </main><!-- End #main -->
+
+{% include "footer.html" %}
+{% endblock %}

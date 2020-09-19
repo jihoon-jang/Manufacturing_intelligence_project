@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% csrf_token %}
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+
+    function reportGenerate() {
+
+        if (confirm("Report를 생성 하시겠습니까?") == false) {
+            return false;
+        }
+
+        ano = document.getElementById("a_no").value;
+
+        var strsql = '/report_generate?a_no=' + ano;
+        //alert(strsql);
+
+        location.href = strsql;
+
+    }
+
+    var xhr;
+
+    // Ajax로 제목 수정하기
+    function updateReport(elem) {
+        var rno = elem.getAttribute("rno");
+        var rtitle = elem.value;
+
+        var strurl = "/report_update?r_no=" + rno + "&r_title=" + rtitle;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                elem.style.backgroundColor = "#E8E8E8";
+                //alert(data.result_msg);
+            }
+
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $("button").click(function(e){
+        alert("1");
+        e.preventDefault();
+        var ano = $(this).find('input').val();
+        $.ajax({
+            type: "POST",
+            url: "/analysis_toggle",
+            method: "POST",
+            data: {'ano': ano },
+            contentType: "application/json",
+            beforeSend: function () {
+                alert("Before Send")
+            },
+            success: function () {
+                alert("Success");
+                alert(response.result_msg);
+            },
+            error: function () {
+                alert("Error")
+            }
+        });
+
+    });
+
+
+
+    </script>
+{% endblock %}
+
+{% block body %}
+{% include "navbar.html" %}
+
+  <main id="main">
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Our Skills Section ======= -->
+    <section class="skills" data-aos="fade-up">
+    <div class="container">
+
+        <div class="section-title">
+          <h2>Reporting 목록</h2>
+        </div>
+
+        <div class="section-title">
+
+            <input type="hidden" name="a_no" id="a_no" value="{{ a_no }}">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="40%" align="center" style="padding:3px 5px;">
+                    </td>
+                    <td width="50%" style="padding:3px 5px;">
+                    </td>
+                    <td width="10%">
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+        <div class="section-title">
+            {% if not rsReport %}
+            <p class="text-center">내용이 없습니다! </p>
+            {% endif %}
+
+            {% for i in rsReport %}
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr style="border-top:solid 1px #dddddd;">
+                        <td width="8%" align="center" style="padding-left:5px;">A{{ i.a_no }}</td>
+                        <td width="5%" align="center"><b>R{{ i.r_no }}</b></td>
+                        <td width="37%" align="left" style="padding-left:5px;">
+                            <a href="/report_view?r_no={{ i.r_no }}">{{ i.report_title }}</a>
+                        </td>
+                        <td width="15%" align="center">{{ i.r_date|date:'Y-m-d' }}</td>
+                        <td width="8%" align="right" style="padding:5px 0;">{{ i.detail_cnt }} / {{ i.comment_cnt }}</td>
+                        <td width="22%" align="right" style="padding:5px 10px 5px 0;">
+                        </td>
+                        <td width="5%" align="right" style="padding:5px 10px 5px 0;">
+                            <span class="btn btn-outline-primary" onclick="location.href='/report_view?r_no={{ i.r_no }}'"><i class="icofont-search-document" ></i></span>
+                        </td>
+                    </tr>
+                </table>
+            {% endfor %}
+
+        </div>
+
+        <br><br>
+
+        <div class="container">
+
+            <div class="section-title">
+                <h2>User Manual</h2>
+
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr style="height:60px;">
+                        <td width="10%" align="center" style="padding-left:5px;">
+                        </td>
+                        <td width="20%" align="left" style="padding-left:5px;"></td>
+                        <td width="70%" align="left" style="padding-left:5px;"></td>
+                    </tr>
+                    <tr style="height:45px;border-top:solid 1px #dddddd;">
+                        <td width="10%" align="center" style="padding-left:5px;">
+                            <span class="btn btn-outline-dark"><i class="icofont-search-document"></i></span>
+                        </td>
+                        <td width="20%" align="left" style="padding-left:5px;">보기</td>
+                        <td width="70%" align="left" style="padding-left:5px;">보고서를 내용을 확인할 수 있습니다.</td>
+                    </tr>
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+    </section><!-- End Our Skills Section -->
+
+  </main><!-- End #main -->
+
+{% include "footer.html" %}
+
+{% endblock %}

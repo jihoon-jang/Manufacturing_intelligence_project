@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+
+</script>
+
+
+<script src="{% static 'js/utils.js' %}"></script>
+
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<script src="{% static 'js/billboard.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'assets/css/billboard.css' %}">
+
+<link rel="stylesheet" href="{% static 'assets/css/theme/insight.min.css' %}">
+{% endblock %}
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+<main id="main">
+
+
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+                <div class="container">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                                <h2>Chart</h2>
+                                <ol>
+                                        <li><a href="/">Home</a></li>
+                                        <li>Chart</li>
+                                </ol>
+                        </div>
+
+                </div>
+        </section><!-- End Breadcrumbs -->
+
+        <!-- ======= Services Section ======= -->
+        <section id="services" class="services section-bg">
+                <div class="container">
+
+                        <div class="section-title">
+                                <h2>Chart</h2>
+                                <p>국가별 월 실적 비교</p>
+                        </div>
+
+                        <div class="row" data-aos="fade-up" data-aos-delay="200">
+                                <div id="container" style="width: 75%;">
+                                        <div id="combinationChart"></div>
+                                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                <label class="btn btn-secondary active">
+                                                        <input type="radio" name="options" id="chtwn">TWN
+                                                </label>
+                                                <label class="btn btn-secondary">
+                                                        <input type="radio" name="options" id="chscn">SCN
+                                                </label>
+                                                <label class="btn btn-secondary">
+                                                        <input type="radio" name="options" id="chncn">NCN
+                                                </label>
+                                                <label class="btn btn-secondary">
+                                                        <input type="radio" name="options" id="chsgp">SGP
+                                                </label>
+                                                <label class="btn btn-secondary">
+                                                        <input type="radio" name="options" id="chkor" checked>KOR
+                                                </label>
+                                        </div>
+                                </div>
+                        </div>
+
+                        <div class="row" data-aos="fade-up" data-aos-delay="200">
+                        </div>
+
+                </div>
+        </section><!-- End Services Section -->
+
+</main>
+{% include "footer.html" %}
+
+<script>
+        var chart = bb.generate({
+                data: {
+                        columns: [
+                                ["기초",
+                                        {% for data in KOR_list.0 %}
+        '{{data}}',
+        {% endfor %}
+	],
+        ["입고",
+                {% for data in KOR_list.1 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["출고",
+                {% for data in KOR_list.2 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["기말",
+                {% for data in KOR_list.3 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["재고회전",
+                {% for data in KOR_list.4 %}
+        '{{data}}',
+                {% endfor %}
+    ],
+    ],
+        type: "bar",
+                types: {
+                기초: "spline",
+                        기말: "spline"
+        },
+        groups: [
+                [
+                        "입고",
+                        "출고",
+                        "재고회전"
+                ]
+        ]
+  },
+        axis: {
+                x: {
+                        type: "category",
+                                categories: [
+                                        "1월",
+                                        "2월",
+                                        "3월",
+                                        "4월",
+                                        "5월",
+                                        "6월",
+                                        "7월",
+                                        "8월",
+                                        "9월",
+                                        "10월",
+                                        "11월",
+                                        "12월"
+                                ]
+                }
+        },
+        colors: {
+                입고: "#ff0000",
+                        출고: "#00ff00",
+                                재고회전: "#0000ff"
+        }
+    ,
+        bindto: "#combinationChart"
+});
+        document.getElementById('chtwn').addEventListener('click', function () {
+                chart.load({
+                        columns: [
+                                ["기초",
+                                        {% for data in TWN_list.0 %}
+        '{{data}}',
+                        {% endfor %}
+	],
+                ["입고",
+                        {% for data in TWN_list.1 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["출고",
+                {% for data in TWN_list.2 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["기말",
+                {% for data in TWN_list.3 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["재고회전",
+                {% for data in TWN_list.4 %}
+        '{{data}}',
+                {% endfor %}
+    ],
+    ],
+	    });
+
+		});
+        document.getElementById('chkor').addEventListener('click', function () {
+                chart.load({
+                        columns: [
+                                ["기초",
+                                        {% for data in KOR_list.0 %}
+        '{{data}}',
+                        {% endfor %}
+	],
+                ["입고",
+                        {% for data in KOR_list.1 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["출고",
+                {% for data in KOR_list.2 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["기말",
+                {% for data in KOR_list.3 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["재고회전",
+                {% for data in KOR_list.4 %}
+        '{{data}}',
+                {% endfor %}
+    ],
+    ],
+	    });
+
+		});
+        document.getElementById('chsgp').addEventListener('click', function () {
+                chart.load({
+                        columns: [
+                                ["기초",
+                                        {% for data in SGP_list.0 %}
+        '{{data}}',
+                        {% endfor %}
+	],
+                ["입고",
+                        {% for data in SGP_list.1 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["출고",
+                {% for data in SGP_list.2 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["기말",
+                {% for data in SGP_list.3 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["재고회전",
+                {% for data in SGP_list.4 %}
+        '{{data}}',
+                {% endfor %}
+    ],
+    ],
+	    });
+
+		});
+        document.getElementById('chncn').addEventListener('click', function () {
+                chart.load({
+                        columns: [
+                                ["기초",
+                                        {% for data in NCN_list.0 %}
+        '{{data}}',
+                        {% endfor %}
+	],
+                ["입고",
+                        {% for data in NCN_list.1 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["출고",
+                {% for data in NCN_list.2 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["기말",
+                {% for data in NCN_list.3 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["재고회전",
+                {% for data in NCN_list.4 %}
+        '{{data}}',
+                {% endfor %}
+    ],
+    ],
+	    });
+
+		});
+        document.getElementById('chscn').addEventListener('click', function () {
+                chart.load({
+                        columns: [
+                                ["기초",
+                                        {% for data in SCN_list.0 %}
+        '{{data}}',
+                        {% endfor %}
+	],
+                ["입고",
+                        {% for data in SCN_list.1 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["출고",
+                {% for data in SCN_list.2 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["기말",
+                {% for data in SCN_list.3 %}
+        '{{data}}',
+                {% endfor %}
+	],
+        ["재고회전",
+                {% for data in SCN_list.4 %}
+        '{{data}}',
+                {% endfor %}
+    ],
+    ],
+	    });
+
+		});
+</script>
+{% endblock %}

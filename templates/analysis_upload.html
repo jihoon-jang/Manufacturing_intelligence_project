@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+
+    var xhr;
+
+    // Ajax로 제목 수정하기
+    function updateFile() {
+        var fcontents = document.getElementById("file_contents").value;
+        fcontents = fcontents.replace(/\n/g, "<BR>");
+        fcontents = fcontents.replace(/\r/g, "<BR>");
+        var sno = document.getElementById("step_no").value;
+
+        if (confirm("File Update 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var strurl = "/analysisfile_update?step_no=" + sno + "&file_contents=" + fcontents;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                location.reload();
+
+            }
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+
+    // Ajax로 제목 수정하기
+    function metaWrite(sno) {
+
+        var strurl = "/analysis_metawrite?step_no=" + sno;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                var obj = JSON.parse(data);
+                alert(obj.result_msg);
+                location.reload();
+
+            }
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+
+    // Ajax로 제목 수정하기
+    function dataReadCheck(elem) {
+
+        var type = elem.getAttribute("type");
+        var sno = elem.getAttribute("sno");
+
+        var strurl = "/analysis_metaread?step_no=" + sno + "&type=" + type;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                var obj = JSON.parse(data);
+                //txt = obj.rsData[1].col01 + '  |  ' + obj.rsData[1].col02 + '  |  ' + obj.rsData[1].qty + '  |  ' +  obj.rsData[1].amt;
+                if (type == "IN") {
+                    document.getElementById("filein_box").innerHTML = obj.result_msg;
+                }
+                else {
+                    document.getElementById("fileout_box").innerHTML = obj.result_msg;
+                }
+                //location.reload();
+
+            }
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    // upload된 파일에서 DB로 저장
+    function metadataSave(elem) {
+
+        var type = elem.getAttribute("type");
+        var sno = elem.getAttribute("sno");
+
+        var strurl = "/analysis_metasave?step_no=" + sno + "&type=" + type;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                var obj = JSON.parse(data);
+                alert(obj.result_msg);
+                location.reload();
+
+            }
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+
+    function uploadReady(type){
+        //alert(type);
+        if(type == "IN") {
+            document.getElementById("inupload_box").style.display = "block";
+        }
+        else
+        {
+            document.getElementById("outupload_box").style.display = "block";
+        }
+    }
+
+
+    </script>
+{% endblock %}
+
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+  <main id="main">
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li><a href="/analysis">Analysis</a></li>
+            <li><a href="/analysis_step?a_no={{ a_no }}">Step</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Our Skills Section ======= -->
+    <section class="skills" data-aos="fade-up">
+    <div class="container">
+
+        <div class="section-title">
+          <h2>데이터 Processing</h2>
+        </div>
+        <div class="section-title">
+
+            <input type="hidden" name="a_no" id="a_no" value="{{ a_no }}">
+            <input type="hidden" name="step_no" id="step_no" value="{{ step_no }}">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="50%" style="padding:3px 5px;text-align:left;">
+                      <p><b>{{ step_no }}</b> . {{ step_title }}</p>
+                      <p>{% if upload_file == "" %}(파일 없음){% else %}<b>{{ upload_file }}.py{% endif %}</p>
+                    </td>
+                    <td width="50%" align="right">
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="location.href='/analysis_data?step_no={{ step_no }}&a_no={{ a_no }}'">1.META</button>
+                    <button class="btn btn-outline-light my-2 my-sm-0" style="margin-right:10px;" onclick="#">2.DATA</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="location.href='/analysis_code?step_no={{ step_no }}&a_no={{ a_no }}'">3.CODE</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="alert('작업중...');">4.PICK</button>
+                    <span class="btn btn-outline-dark" onclick="location.href='/analysis_step?a_no={{ a_no }}'"><i class="icofont-chart-flow"></i></span>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div class="section-title">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td width="30%" align="right">
+                    </td>
+                    <td width="40%">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="metaWrite({{ step_no }})">META EXTRACT</button>
+                    </td>
+                    <td width="30%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section-title">
+        {% if datatable_in == "1" %}
+            <div style="width:100%;border-top:solid 1px #dddddd;padding:10px 0;">
+                <table width="100%">
+                    <tr>
+                        <td width="30%" align="left" style="padding:5px;">
+                        Input table ( {{ datain_cnt }} 건 ) <b>tdata_{{ step_no }}_in</b><br>
+                            <span style="color:#FF6600;">{% if tablein_flag == "0" %} Meta file not created... {% else %} Meta file created... {% endif %}</span>
+                        </td>
+                        <td>
+                            {% if tablein_flag == "1" %}
+                                <a href="/static/datafiles/tdata_{{ step_no }}_in.xlsx">
+                                <span class="btn btn-outline-dark"><i class="icofont-download-alt"></i></span>
+                                </a>
+                            {% else %}
+                                <span class="btn btn-outline-light"><i class="icofont-download-alt"></i></span>
+                            {% endif %}
+                        </td>
+                        <td align="center" bgcolor="#e8e8e8">
+                        <span class="btn btn-outline-dark" onclick="uploadReady('IN')"><i class="icofont-upload"></i></span>
+                        </td>
+                        <td width="20%" bgcolor="#e8e8e8">
+                        <div id="inupload_box" style="white-space:nowrap;margin:0 5px;display:none;">
+                        <form method="POST" enctype="multipart/form-data" action="/analysis_metaupload">
+                            {% csrf_token %}
+                            <input type="file" name="ufile" >
+                            <input type="hidden" name="image_a_no" value="{{ a_no }}" />
+                            <input type="hidden" name="image_step_no" value="{{ step_no }}" />
+                            <input type="hidden" name="image_type" value="in" />
+                            <button type="submit" class="btn btn-outline-primary" >UP</button>
+                        </form>
+                        </div>
+                        </td>
+                        <td>
+                        <span class="btn btn-outline-dark" type="IN" sno="{{ step_no }}" onclick="dataReadCheck(this)"><i class="icofont-check"></i></span>
+                        </td>
+                        <td>
+                        <span class="btn btn-outline-dark" type="IN" sno="{{ step_no }}" onclick="metadataSave(this)"><i class="icofont-database-add"></i></span>
+                        </td>
+                    </tr>
+                </table>
+
+
+            </div>
+            <div>
+                <table width="100%" border="0" cellspacing="=0" cellpadding="=0">
+                    <tr>
+                        <td width="30%" bgcolor="e8e8e8">
+                            <div style="width:100%;height:150px;padding:5px;overflow:auto;">
+                            {% if not rsMetaIN %}
+                            <div style="padding:3px 0;">
+                                <p class="text-center">Input Meta 없습니다.</p>
+                            </div>
+                            {% endif %}
+                            {% for ii in rsMetaIN %}
+                            <div style="padding:3px 0;">
+                                <p class="text-center">{{ ii.column_name }} ({{ ii.column_type }})</p>
+                            </div>
+                            {% endfor %}
+                            </div>
+                        </td>
+                        <td width="70%">
+                            <div style="width:100%;height:150px;padding:5px;overflow:auto;border:solid 1px #e8e8e8;">
+                            {% if not rsDataIN %}
+                                <div style="padding:3px 0;">
+                                    <p class="text-center">Input data 없습니다.</p>
+                                </div>
+                            {% endif %}
+                            {% for di in rsDataIN %}
+                                <div style="padding:3px 0;">
+                                    <p class="text-center">{{ di }}</p>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="padding:5px 0;" id="filein_box">
+            </div>
+        {% else %}
+            <p>Input table not created...</p>
+        {% endif %}
+        </div>
+
+        <div class="section-title">
+        {% if datatable_out == "1" %}
+            <div style="width:100%;border-top:solid 1px #dddddd;padding:10px 0;">
+                <table width="100%" border="0" cellspacing="=0" cellpadding="=0">
+                    <tr>
+                        <td width="30%" align="left" style="padding:5px;">
+                            Output table ( {{ dataout_cnt }} 건 ) <b> tdata_{{ step_no }}_out</b><br>
+                            <span style="color:#FF6600;">{% if tableout_flag == "0" %} Meta file not created... {% else %} Meta file created... {% endif %}</span>
+                        </td>
+                        <td>
+                            {% if tableout_flag == "1" %}
+                                <a href="/static/datafiles/tdata_{{ step_no }}_out.xlsx">
+                                <span class="btn btn-outline-dark"><i class="icofont-download-alt"></i></span>
+                                </a>
+                            {% else %}
+                                <span class="btn btn-outline-light"><i class="icofont-download-alt"></i></span>
+                            {% endif %}
+                        </td>
+                        <td align="center" bgcolor="#e8e8e8">
+                        <span class="btn btn-outline-dark" onclick="uploadReady('OUT')"><i class="icofont-upload"></i></span>
+                        </td>
+                        <td width="20%" bgcolor="#e8e8e8">
+                        <div id="outupload_box" style="white-space:nowrap;margin:0 5px;display:none;">
+                        <form method="POST" enctype="multipart/form-data" action="/analysis_metaupload">
+                            {% csrf_token %}
+                            <input type="file" name="ufile" >
+                            <input type="hidden" name="image_a_no" value="{{ a_no }}" />
+                            <input type="hidden" name="image_step_no" value="{{ step_no }}" />
+                            <input type="hidden" name="image_type" value="out" />
+                            <button type="submit" class="btn btn-outline-primary" >UP</button>
+                        </form>
+                        </div>
+                        </td>
+                        <td>
+                        <span class="btn btn-outline-dark" type="OUT" sno="{{ step_no }}" onclick="dataReadCheck(this)"><i class="icofont-check"></i></span>
+                        </td>
+                        <td>
+                        <span class="btn btn-outline-dark" type="OUT" sno="{{ step_no }}" onclick="metadataSave(this)"><i class="icofont-database-add"></i></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div>
+                <table width="100%" border="0" cellspacing="=0" cellpadding="=0">
+                    <tr>
+                        <td width="30%" bgcolor="e8e8e8">
+                            <div style="width:100%;height:150px;padding:5px;overflow:auto;">
+
+                            {% if not rsMetaOUT %}
+                            <div style="padding:3px 0;">
+                                <p class="text-center">Output Meta 없습니다.</p>
+                            </div>
+                            {% endif %}
+                            {% for io in rsMetaOUT %}
+                            <div style="padding:3px 0;">
+                                <p class="text-center">{{ io.column_name }} ({{ io.column_type }})</p>
+                            </div>
+                            {% endfor %}
+
+                            </div>
+                        </td>
+                        <td width="70%">
+                            <div style="width:100%;height:150px;padding:5px;overflow:auto;border:solid 1px #e8e8e8;">
+
+                            {% if not rsDataOUT %}
+                                <div style="padding:3px 0;">
+                                    <p class="text-center">Output data 없습니다.</p>
+                                </div>
+                            {% endif %}
+                            {% for do in rsDataOUT %}
+                                <div style="padding:3px 0;">
+                                    <p class="text-center">{{ do }}</p>
+                                </div>
+                            {% endfor %}
+
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+            <div style="padding:5px 0;" id="fileout_box">
+            </div>
+        {% else %}
+            <p>Output table not created...</p>
+        {% endif %}
+        </div>
+
+    </div>
+
+
+
+      <div class="container">
+
+        <div class="section-title">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr style="height:80px;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;"></td>
+                    <td width="65%" align="left" style="padding-left:5px;"></td>
+                </tr>
+                <tr style="height:45px;">
+                    <td width="100%" align="center" colspan="3"><b>도움말</b></td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" >META EXTRACT</button>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Template</td>
+                    <td width="65%" align="left" style="padding-left:5px;">Template file 저장</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"><i class="icofont-download-alt"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Download</td>
+                    <td width="65%" align="left" style="padding-left:5px;">Template Download</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"><i class="icofont-upload"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Upload</td>
+                    <td width="65%" align="left" style="padding-left:5px;">Template Upload</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"><i class="icofont-check"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Check</td>
+                    <td width="65%" align="left" style="padding-left:5px;">업로드된 Excel 파일의 데이터 건수 확인</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"><i class="icofont-database-add"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Save</td>
+                    <td width="65%" align="left" style="padding-left:5px;">데이터 저장</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"><i class="icofont-play-alt-1"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">RUN</td>
+                    <td width="65%" align="left" style="padding-left:5px;">분석 CODE 실행</td>
+                </tr>
+            </table>
+
+        </div>
+
+      </div>
+
+    </section><!-- End Our Skills Section -->
+
+  </main><!-- End #main -->
+
+{% include "footer.html" %}
+
+{% endblock %}

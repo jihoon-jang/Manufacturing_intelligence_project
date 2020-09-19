@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% csrf_token %}
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+
+    var xhr;
+
+    function columnInGenerate(elem) {
+
+
+        var sno = elem.getAttribute("sno");
+        var cname = document.getElementById("columnin_name").value;
+        //var toption = document.getElementById("columnin_type").options;
+
+        var ctype = "String";
+        if(document.getElementById("columnin_type_string").checked) {
+            ctype = "String";
+        };
+        if(document.getElementById("columnin_type_int").checked) {
+            ctype = "Integer";
+        };
+        if(document.getElementById("columnin_type_float").checked) {
+            ctype = "Float";
+        };
+
+        if(cname == "") {
+            document.getElementById("columnin_name").style.backgroundColor = "#e8e8e8";
+            document.getElementById("columnin_name").focus();
+            return false;
+        }
+
+        if (confirm("생성 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var strurl = "/data_column_generate?step_no=" + sno + "&flag=IN&column_name=" + cname + "&column_type=" + ctype;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                //var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+
+                var txt = document.getElementById("incolumns_box").innerHTML;
+                txt += "<br><b>" + cname + "</b> (" + ctype + ")"
+                document.getElementById("incolumns_box").innerHTML = txt;
+
+                document.getElementById("columnin_name").value = "";
+
+                //location.reload();
+
+            }
+
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+
+    function columnOutGenerate(elem) {
+
+        var sno = elem.getAttribute("sno");
+        var cname = document.getElementById("columnout_name").value;
+        //var tindex = document.getElementById("columnout_type").selectedIndex;
+
+        var ctype = "String";
+        if(document.getElementById("columnout_type_string").checked) {
+            ctype = "String";
+        };
+        if(document.getElementById("columnout_type_int").checked) {
+            ctype = "Integer";
+        };
+        if(document.getElementById("columnout_type_float").checked) {
+            ctype = "Float";
+        };
+
+        if(cname == "") {
+            document.getElementById("columnout_name").style.backgroundColor = "#e8e8e8";
+            document.getElementById("columnout_name").focus();
+            return false;
+        }
+        if(ctype == "") {
+            return false;
+        }
+
+        if (confirm("생성 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var strurl = "/data_column_generate?step_no=" + sno + "&flag=OUT&column_name=" + cname + "&column_type=" + ctype;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                var txt = document.getElementById("outcolumns_box").innerHTML;
+                txt += "<br><b>" + cname + "</b> (" + ctype + ")"
+                document.getElementById("outcolumns_box").innerHTML = txt;
+
+                document.getElementById("columnout_name").value = "";
+
+            }
+
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+
+    function columnCopy(elem) {
+        if (confirm("Out meta를 copy 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var sno = elem.getAttribute("sno");
+
+        var strurl = "/data_columncopy?step_no=" + sno;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+                //alert("sss")
+                location.reload();
+            }
+
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+
+    }
+
+    function schemaClone() {
+        alert("Schema를 Clone... 작업 중");
+    }
+
+
+    function dataInitialize(elem) {
+        alert("데이터 초기화... 작업 중");
+    }
+
+    function dataFileGenerate(elem) {
+
+        var sno = elem.getAttribute("sno");
+        //alert(sno);
+        var flag = elem.getAttribute("flag");
+        //alert(flag);
+
+        var strurl = "/data_file_generate?step_no=" + sno + "&flag=" + flag;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                location.reload();
+
+                //var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+            }
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+
+    function dataTableGenerate(elem) {
+
+        if (confirm("Table이 삭제되고 새로 생성됨니다. 재생성하시겠습니까?") == false) {
+            return false;
+        }
+
+        var sno = elem.getAttribute("sno");
+        var flag = elem.getAttribute("flag");
+
+        var strurl = "/data_table_generate?step_no=" + sno + "&dtype=" + flag;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                //var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+            }
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    function columnDelete(id) {
+
+        if (confirm("삭제 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var strurl = "/data_columndelete?id=" + id;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+                document.getElementById("colbox_" + id).style.display = "none";
+            }
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    </script>
+{% endblock %}
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+  <main id="main">
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li><a href="/analysis">Analysis</a></li>
+            <li><a href="/analysis_step?a_no={{ a_no }}">Step</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Our Skills Section ======= -->
+    <section class="skills" data-aos="fade-up">
+    <div class="container">
+
+        <div class="section-title">
+          <h2>Metadata설정 및 Table생성</h2>
+          <p>In/Out Schema 작성 (Metadata) > IN/OUT Table생성</p>
+        </div>
+
+        <div class="section-title">
+            <input type="hidden" name="a_no" id="a_no" value="{{ a_no }}">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="45%" style="padding:3px 5px;text-align:left;">
+                      <p><b>{{ step_no }}</b> . {{ step_title }}</p>
+                    </td>
+                    <td width="55%" align="right" style="padding:3px 5px;">
+                    <button class="btn btn-outline-light my-2 my-sm-0" style="margin-right:10px;" onclick="#">1.META</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="location.href='/analysis_upload?step_no={{ step_no }}&a_no={{ a_no }}'">2.DATA</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="location.href='/analysis_code?step_no={{ step_no }}&a_no={{ a_no }}'">3.CODE</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="alert('작업중...');">4.PICK</button>
+                    <span class="btn btn-outline-dark" onclick="schemaClone();"><i class="fa fa-cloud-download" aria-hidden="true"></i></span>
+                    <span class="btn btn-outline-dark" onclick="location.href='/analysis_step?a_no={{ a_no }}'"><i class="icofont-chart-flow"></i></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="section-title">
+
+            <table border="0" cellpadding="1" cellspacing="1" width="100%">
+                <tr height="60" bgcolor="#f8f8f8" style="border-top:solid 1px #ffffff;">
+                    <td width="22%" align="center" style="padding:3px 5px;">
+                        <input type="text" id="columnin_name" value="" style="width:100%;border:solid 1px #888888;" />
+                    </td>
+                    <td width="22%" align="center" style="padding:3px 5px;">
+                        <input type="radio" id="columnin_type_string" name="columnin_type" >String
+                        <input type="radio" id="columnin_type_int" name="columnin_type" >Integer
+                        <input type="radio" id="columnin_type_float" name="columnin_type" >Float
+                    </td>
+                    <td width="6%" align="center" style="padding:3px 5px;">
+                        <span class="btn btn-outline-dark"  sno="{{ step_no }}" onclick="columnInGenerate(this);"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                    </td>
+                    <td width="22%" align="center" style="padding:3px 5px;">
+                        <input type="text" id="columnout_name" value="" style="width:100%;border:solid 1px #888888;" />
+                    </td>
+                    <td width="22%" align="center" style="padding:3px 5px;">
+                        <input type="radio" id="columnout_type_string" name="columnout_type">String
+                        <input type="radio" id="columnout_type_int" name="columnout_type">Integer
+                        <input type="radio" id="columnout_type_float" name="columnout_type">Float
+                    </td>
+                    <td width="6%" align="center" style="padding:3px 5px;">
+                        <span class="btn btn-outline-dark"  sno="{{ step_no }}"  onclick="columnOutGenerate(this);"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                    </td>
+                </tr>
+            </table>
+            <table border="0" cellpadding="1" cellspacing="1" width="100%">
+                <tr height="45">
+                    <td width="47%" align="center" valign="top" style="padding:3px 5px;">
+
+                        {% if not rsMetaIN %}
+                            <p class="text-center">Column Meta 없습니다</p>
+                        {% endif %}
+                        <div style="margin:20px 0;">
+                        {% for i in rsMetaIN %}
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" id="colbox_{{ i.id }}">
+                                <tr style="border-top:solid 1px #dddddd;">
+                                    <td width="5%" align="left" style="padding-left:5px;"></td>
+                                    <td width="75%" align="left" >
+                                        <b>{{ i.column_name }}</b> ({{ i.column_type }})
+                                    </td>
+                                    <td width="10%" align="right" style="padding:5px 10px 5px 0;">
+                                        <i class="icofont-cut" onclick="columnDelete({{ i.id }});" style="cursor:pointer;"></i>
+                                    </td>
+                                    <td width="10%" align="right" style="padding:5px 10px 5px 0;">
+                                        <i class="icofont-long-arrow-up"></i>
+                                    </td>
+                                </tr>
+                            </table>
+                        {% endfor %}
+                        </div>
+
+                    </td>
+                    <td width="6%" align="center" valign="middle">
+                        <span class="btn btn-outline-dark"  sno="{{ step_no }}"  onclick="columnCopy(this);">
+                            <i class="icofont-circled-right"></i></span>
+                    </td>
+                    <td width="47%" align="center" valign="top" style="padding:3px 5px;">
+
+                        {% if not rsMetaOUT %}
+                            <p class="text-center">Column Meta 없습니다.</p>
+                        {% endif %}
+                        <div style="margin:20px 0;">
+                        {% for j in rsMetaOUT %}
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" id="colbox_{{ j.id }}">
+                                <tr style="border-top:solid 1px #dddddd;">
+                                    <td width="5%" align="left" style="padding-left:5px;"></td>
+                                    <td width="75%" align="left" >
+                                        <b>{{ j.column_name }}</b> ({{ j.column_type }})
+                                    </td>
+                                    <td width="10%" align="right" style="padding:5px 10px 5px 0;">
+                                        <i class="icofont-cut" onclick="columnDelete({{ j.id }});" style="cursor:pointer;"></i>
+                                    </td>
+                                    <td width="10%" align="right" style="padding:5px 10px 5px 0;">
+                                        <i class="icofont-long-arrow-up"></i>
+                                    </td>
+                                </tr>
+                            </table>
+                        {% endfor %}
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td width="45%" align="center" style="padding:3px 5px;">
+                        <div id="incolumns_box">
+                            Added input columns
+                        </div>
+                    </td>
+                    <td width="10%" align="center" style="padding:3px 5px;">
+                    </td>
+                    <td width="45%" align="center" style="padding:3px 5px;">
+                        <div id="outcolumns_box">
+                            Added output columns
+                        </div>
+                    </td>
+                </tr>
+                <tr height="30">
+                    <td width="100%" colspan="3" align="center" style="padding:3px 5px;">
+                    </td>
+                </tr>
+
+            </table>
+            <table border="0" cellpadding="1" cellspacing="1" width="100%">
+                <tr height="60" bgcolor="#e8e8e8">
+                    <td width="22%" align="center" style="padding:3px 5px;">
+                        <b>tdata_ {{ step_no }} _in</b>
+                    </td>
+                    <td width="22%" align="center" style="padding:3px 5px;">
+                    </td>
+                    <td width="6%" align="center" style="padding:3px 5px;">
+                        <span class="btn btn-outline-dark" sno="{{ step_no }}" flag="IN" onclick="dataTableGenerate(this)"><i class="fa fa-table" aria-hidden="true"></i></span>
+                    </td>
+                    <td width="22%" align="center" style="padding:3px 5px;">
+                        <b>tdata_ {{ step_no }} _out</b>
+                    </td>
+                    <td width="22%" align="center" style="padding:3px 5px;">
+                    </td>
+                    <td width="6%" align="center" style="padding:3px 5px;">
+                        <span class="btn btn-outline-dark" sno="{{ step_no }}" flag="OUT" onclick="dataTableGenerate(this)"><i class="fa fa-table" aria-hidden="true"></i></span>
+                    </td>
+                </tr>
+                <tr height="60">
+                    <td width="100%" colspan="3" align="center" style="padding:3px 5px;">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr style="height:45px;">
+                    <td width="100%" align="center" colspan="3"><b>도움말</b></td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark" ><i class="fa fa-cloud-download" aria-hidden="true"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Clone</td>
+                    <td width="70%" align="left" style="padding-left:5px;">Input, Output schema를 Clone (작업중)</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark" ><i class="fa fa-table" aria-hidden="true"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Table생성</td>
+                    <td width="70%" align="left" style="padding-left:5px;">컬럼Meta 파일로 Table생성 <br><b>※ 테이블이 있으면 삭제하고 생성됩니다.</b></td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"  ><i class="fa fa-plus" aria-hidden="true"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Create</td>
+                    <td width="70%" align="left" style="padding-left:5px;">컬럼Meta 생성</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <i class="icofont-search-document"></i>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">보기</td>
+                    <td width="70%" align="left" style="padding-left:5px;">내용 보기</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <i class="icofont-cut"></i>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">삭제</td>
+                    <td width="70%" align="left" style="padding-left:5px;">컬럼Meta 삭제</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <i class="icofont-long-arrow-up"></i>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">UP</td>
+                    <td width="70%" align="left" style="padding-left:5px;">순서를 앞으로... (작업중)</td>
+                </tr>
+            </table>
+
+        </div>
+
+      </div>
+
+
+    </section><!-- End Our Skills Section -->
+
+  </main><!-- End #main -->
+
+{% include "footer.html" %}
+
+{% endblock %}

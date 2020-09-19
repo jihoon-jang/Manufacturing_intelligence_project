@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+
+    var xhr;
+
+    // Ajax로 제목 수정하기
+    function updateFile() {
+        var fcontents = document.getElementById("file_contents").value;
+        fcontents = fcontents.replace(/\n/g, "<BR>");
+        fcontents = fcontents.replace(/\r/g, "<BR>");
+
+        fcontents = fcontents.replace(/[+]/g, "<PLUS>");
+        fcontents = fcontents.replace(/[#]/g, "<SHARP>");
+        //alert(fcontents);
+        var sno = document.getElementById("step_no").value;
+
+        if (confirm("File Update 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var strurl = "/analysisfile_update?step_no=" + sno + "&file_contents=" + fcontents;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+                //alert('111');
+
+                location.reload();
+
+            }
+        };
+        xhr.open("GET", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    function analysisRun(elem) {
+
+        if (confirm("분석CODE 실행 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var ano = document.getElementById("a_no").value;
+        var sno = elem.getAttribute("sno");
+        var ufile = elem.getAttribute("ufile");
+
+        var strurl = '/analysis_run?a_no=' + ano + '&step_no=' + sno + '&upload_file=' + ufile;
+        //alert(strurl);
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                //var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+
+            }
+
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+
+    }
+    </script>
+{% endblock %}
+
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+  <main id="main">
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li><a href="/analysis">Analysis</a></li>
+            <li><a href="/analysis_step?a_no={{ a_no }}">Step</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Our Skills Section ======= -->
+    <section class="skills" data-aos="fade-up">
+    <div class="container">
+
+        <div class="section-title">
+          <h2>분석 파일 Upload & 실행</h2>
+        </div>
+        <div class="section-title">
+
+            <input type="hidden" name="a_no" id="a_no" value="{{ a_no }}">
+            <input type="hidden" name="step_no" id="step_no" value="{{ step_no }}">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="50%" style="padding:3px 5px;text-align:left;">
+                      <p><b>{{ step_no }}</b> . {{ step_title }}</p>
+                      <p>{% if upload_file == "" %}(파일 없음){% else %}<b>{{ upload_file }}.py{% endif %}</p>
+                    </td>
+                    <td width="50%" align="right">
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="location.href='/analysis_data?step_no={{ step_no }}&a_no={{ a_no }}'">1.META</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="location.href='/analysis_upload?step_no={{ step_no }}&a_no={{ a_no }}'">2.DATA</button>
+                    <button class="btn btn-outline-light my-2 my-sm-0" style="margin-right:10px;" onclick="#">3.CODE</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="alert('작업중...');">4.PICK</button>
+                    <span class="btn btn-outline-dark" onclick="location.href='/analysis_step?a_no={{ a_no }}'"><i class="icofont-chart-flow"></i></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" height="30"></td>
+                </tr>
+            </table>
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr height="30">
+                    <td width="45%" bgcolor="#f8f8f8"><b>tdata_{{ step_no }}_in</b> ( {{ datain_cnt }}건 )
+                    </td>
+                    <td width="10%" rowspan="2">
+                        {% if upload_cnt > 0 %}
+                            <span class="btn btn-outline-primary" sno="{{ step_no }}" ufile="{{ upload_file }}" onclick="analysisRun(this);"><i class="icofont-play-alt-1"></i></span>
+                        {% else %}
+                            <span class="btn btn-outline-light" onclick="javascript:alert('분석CODE 파일 업로드 하세요.'"><i class="icofont-play-alt-1"></i></span>
+                        {% endif %}
+                    </td>
+                    <td width="45%" bgcolor="#f8f8f8"><b>tdata_{{ step_no }}_out</b> ( {{ dataout_cnt }}건 )
+                    </td>
+                </tr>
+                <tr>
+                    <td width="45%" bgcolor="#f0f0f0">
+
+                        {% if not rsMetaIN %}
+                        <div style="padding:3px 0;">
+                            <p class="text-center">Input Meta 없습니다.</p>
+                        </div>
+                        {% endif %}
+                        {% for ii in rsMetaIN %}
+                            <span style="margin-left:15px;white-space:nowrap;"><b>{{ ii.column_name }}</b> ({{ ii.column_type }})</span>,
+                        {% endfor %}
+
+                    </td>
+                    <td width="45%" bgcolor="#f0f0f0">
+
+                        {% if not rsMetaOUT %}
+                        <div style="padding:3px 0;">
+                            <p class="text-center">Output Meta 없습니다.</p>
+                        </div>
+                        {% endif %}
+                        {% for io in rsMetaOUT %}
+                            <span style="margin-left:15px;white-space:nowrap;"><b>{{ io.column_name }}</b> ({{ io.column_type }})</span>,
+                        {% endfor %}
+
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+        <div class="section-title">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr height="45">
+                    <td width="50%" align="center">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type = "file" name="ufile" >
+                        <button type="submit" class="btn btn-outline-primary" >업로드</button>
+                    </form>
+                    </td>
+                    <td width="30%" align="center">
+                    {% if url %}
+                    <p>Uploaded file : <a href="{{ url }}">{{ url }}</a>;;;;;</p>
+                    {% endif %}
+                    </td>
+                    <td width="20%" align="center">
+                        <button type="submit" class="btn btn-outline-primary" onclick="updateFile()">CODE UPDATE</button>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div class="section-title">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="100%">
+                        <textarea style="width:100%;" rows="20" name="file_contents" id="file_contents">{{ file_contents }}</textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+
+
+      <div class="container">
+
+        <div class="section-title">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr style="height:80px;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;"></td>
+                    <td width="65%" align="left" style="padding-left:5px;"></td>
+                </tr>
+                <tr style="height:45px;">
+                    <td width="100%" align="center" colspan="3"><b>도움말</b></td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark" ><i class="icofont-play-alt-1"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">분석 실행</td>
+                    <td width="65%" align="left" style="padding-left:5px;">.py파일 실행</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <button type="BUTTON" class="btn btn-outline-primary" >업로드</button>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">업로드</td>
+                    <td width="65%" align="left" style="padding-left:5px;">분석 파일 업로드 (Python)<br><b>.py 파일만 업로드 해 주세요.</b></td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="15%" align="center" style="padding-left:5px;">
+                        <button type="BUTTON" class="btn btn-outline-primary" >UPDATE</button>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">Update</td>
+                    <td width="65%" align="left" style="padding-left:5px;">분석 파일 업데이트 </td>
+                </tr>
+            </table>
+
+        </div>
+
+      </div>
+
+
+    </section><!-- End Our Skills Section -->
+
+  </main><!-- End #main -->
+
+{% include "footer.html" %}
+
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% csrf_token %}
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+    var xhr;
+
+    function createSection() {
+      section  = document.getElementById("section_title").value;
+      ano  = document.getElementById("a_no").value;
+      rno  = document.getElementById("r_no").value;
+
+      if(section == "") {
+        document.getElementById("section_title").focus();
+        return false;
+      }
+
+      strsql = '/reportedit_section?s_title=' + section + '&a_no=' + ano + '&r_no=' + rno;
+      //alert(strsql);
+      location.href = strsql;
+    }
+
+    function sectionImgSet(elem) {
+      var rh_no = elem.getAttribute("rh_no");
+      document.getElementById("image_rh_no").value = rh_no;
+
+      document.getElementById("sectionimage_block").style.display = "block";
+    }
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $("button").click(function(e){
+        alert("1");
+        e.preventDefault();
+        var ano = $(this).find('input').val();
+        $.ajax({
+            type: "POST",
+            url: "/analysis_toggle",
+            method: "POST",
+            data: {'ano': ano },
+            contentType: "application/json",
+            beforeSend: function () {
+                alert("Before Send")
+            },
+            success: function () {
+                alert("Success");
+                alert(response.result_msg);
+            },
+            error: function () {
+                alert("Error")
+            }
+        });
+
+    });
+
+    </script>
+{% endblock %}
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+  <input type="hidden" id="r_no" value="{{ r_no }}" />
+  <input type="hidden" id="a_no" value="{{ a_no }}" />
+  <input type="hidden" id="rh_no" value="0" />
+  <input type="hidden" id="release_flag" value="{{ release_flag }}" />
+  <input type="hidden" id="text_flag" value="0" />
+
+
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li><a href="/reporting">Reporting</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Blog Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container">
+
+        <div class="row">
+
+          <div class="col-lg-8 entries">
+
+            <article class="entry entry-single">
+
+              <h2 class="entry-title">
+                <a href="#">{{ report_title }} </a>
+              </h2>
+
+                <br>
+              <div class="entry-meta">
+                  <ul>
+                    <span style="margin-right:20px"><i class="icofont-user"></i>{{ report_user }}</span>
+                    <span style="margin-right:20px"><i class="icofont-wall-clock"></i>{{ report_date }}</span>
+                    <span>{{ detail_cnt }} Step</span>
+                  </ul>
+              </div>
+
+                <br>
+              <div class="entry-content">
+                  <p><span id="notemain">{{ report_note }}</span></p>
+
+                  <br>
+                {% for j in rsDetail %}
+                <div id="sectionbox_{{ j.rh_no }}">
+                    <h3><span id="notetitle_{{ j.rh_no }}">{{ j.s_title }}</span></h3><br>
+                    {% if j.s_note != "" %}
+                    <p>
+                        <span id="notepre_{{ j.rh_no }}">{{ j.s_note }}</span>
+                    </p>
+                    {% else %}
+                    <p>
+                        <span id="notepre_{{ j.rh_no }}"></span>
+                    </p>
+                    {% endif %}
+
+                    {% if j.img_url != "" %}
+                    <img src="/static/photos/{{ j.img_url }}" class="img-fluid" alt="" style="width:100%;">
+                    {% endif %}
+
+                    {% if j.s_note_special != "" %}
+                  <h4><i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                    <span id="notespecial_{{ j.rh_no }}">{{ j.s_note_special }}</span>
+              <i class="bx bxs-quote-alt-right quote-icon-right"></i></h4>
+
+                    {% else %}
+                      <p>
+                        <span id="notespecial_{{ j.rh_no }}"></span>
+                      </p>
+                    {% endif %}
+
+                    {% if j.s_note_post != "" %}
+                    <p>
+                      <span id="notepost_{{ j.rh_no }}">{{ j.s_note_post }}</span>
+                    </p>
+                    {% else %}
+                    <p>
+                      <span id="notepost_{{ j.rh_no }}"></span>
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                  <section id="portfolio" class="portfolio">
+      <div class="container">
+{% for i in rsComment %}
+                  <table width="100%">
+                      <tr height="15" style="padding:10px">
+                          <td width="20%" style="padding:10px; font-size:0.6em" valign="top">({{ i.c_date }})</td>
+                          <td width="50%" style="padding:10px" valign="top">{{ i.comment_descript }}</td>
+                          <td width="30%" style="padding:10px" valign="top">
+                              {% if i.image_url != "" %}
+                              <img src="static/reportcmt/{{ i.image_url }}" style="width:100%">
+                              {% endif %}
+                          </td>
+                      </tr>
+                  {% endfor %}
+                </table>
+      </div>
+                  </section>
+              <br><br><br><br><Br>
+
+                <div class="float-right share">
+                  <a href="" title="Share on Twitter"><i class="icofont-twitter"></i></a>
+                  <a href="" title="Share on Facebook"><i class="icofont-facebook"></i></a>
+                  <a href="" title="Share on Instagram"><i class="icofont-instagram"></i></a>
+                </div>
+
+
+            </article><!-- End blog entry -->
+
+          </div><!-- End blog entries list -->
+
+          <div class="col-lg-4">
+
+            <div class="sidebar">
+
+              <h3 class="sidebar-title">Comment</h3>
+              <div class="sidebar-item search-form">
+
+                    <form method="POST" enctype="multipart/form-data" action="/reportcmt_create" id="formComment">
+                        <input type="hidden" name="image_r_no" value="{{ r_no }}" />
+                        {% csrf_token %}
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tr height="20">
+                                <td align="center">
+                                <textarea class="form-control valid" rows="5" name="note_box" id="note_box" style="margin-bottom:5px;" ></textarea><br>
+                                </td>
+                            </tr>
+                            <tr height="35">
+                                <td align="center">
+                                    <input type="file" name="ufile" >
+                                </td>
+                            </tr>
+                            <tr height="35">
+                                <td align="center">
+                                <button type="submit"  class="btn btn-default"><i class="icofont-ui-text-chat">  댓글 달기</i></button>
+                                </td>
+                            </tr>
+
+                        </table>
+                        <div class="sidebar-item categories">
+              </div><!-- End sidebar categories-->
+                    </form>
+              </div><!-- End sidebar search formn-->
+
+                <br>
+
+              <h3 class="sidebar-title">Recent Reports</h3>
+              {% if not rsReport %}
+              <p class="text-center">보고서가 없습니다.</p>
+              {% endif %}
+
+              <div class="sidebar-item categories">
+                <ul>
+                  {% for i in rsReport %}
+                  <li><a href="/report_view?a_no={{ i.a_no }}&r_no={{ i.r_no }}">{{ i.report_title }} <span>({{ i.detail_cnt }})</span></a></li>
+                  {% endfor %}
+                </ul>
+              </div><!-- End sidebar categories-->
+
+            </div><!-- End sidebar -->
+
+          </div><!-- End blog sidebar -->
+
+        </div><!-- End row -->
+
+      </div><!-- End container -->
+
+    </section><!-- End Blog Section -->
+
+
+{% include "footer.html" %}
+
+{% endblock %}

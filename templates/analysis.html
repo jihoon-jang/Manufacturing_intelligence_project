@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% csrf_token %}
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+
+    var xhr;
+
+    // Ajax로 제목 수정하기
+    function updateAnalysis(elem) {
+        var ano = elem.getAttribute("ano");
+        var atitle = document.getElementById("title_" + ano).value;
+
+        //if (confirm("Update 하시겠습니까?") == false) {
+        //    return false;
+        //}
+
+        var strurl = "/analysis_update?a_no=" + ano + "&a_title=" + atitle;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                elem.style.backgroundColor = "#E8E8E8";
+
+                //var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+            }
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    function analysisGenerate() {
+
+        if (confirm("분석을 생성 하시겠습니까?") == false) {
+            return false;
+        }
+
+        sel = document.getElementById("analysis_type");
+        tno = sel.value;
+        //alert(tno);
+
+        tdesc = sel.options[sel.selectedIndex].text;
+        //alert(tdesc);
+
+        var strsql = '/analysis_generate?type_no=' + tno + '&type_desc=' + tdesc;
+        //alert(strsql);
+
+        location.href = strsql;
+
+    }
+
+    function analysisQuery() {
+
+        tno = document.getElementById("analysis_type").value;
+        //alert(tno);
+        location.href = '/analysis?type_no=' + tno;
+
+    }
+
+    // Jquery AJAX 테스트 중
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $("button").click(function(e){
+
+        alert("1");
+        e.preventDefault();
+        var ano = $(this).find('input').val();
+        $.ajax({
+            type: "POST",
+            url: "/analysis_toggle",
+            method: "POST",
+            data: {'ano': ano },
+            contentType: "application/json",
+            beforeSend: function () {
+                alert("Before Send")
+            },
+            success: function () {
+                alert("Success");
+                alert(response.result_msg);
+            },
+            error: function () {
+                alert("Error")
+            }
+        });
+
+    });
+
+    </script>
+{% endblock %}
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+  <main id="main">
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Our Skills Section ======= -->
+    <section class="skills" data-aos="fade-up">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>분석 목록</h2>
+          <p>분석 생성과 단계설정/실행, 분석 Reporting</p>
+        </div>
+
+        <div class="section-title">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td width="80%" align="center" style="padding:3px 5px;">
+                </td>
+                <td width="10%" style="padding:3px 5px;">
+                    <select name="analysis_type" id="analysis_type" onchange="analysisQuery();">
+                        {% for j in rsType %}
+                            {% if type_no == j.type_no %}
+                                <option value="{{ j.type_no }}" selected>{{ j.type_desc }}</option>
+                            {% else %}
+                                <option value="{{ j.type_no }}">{{ j.type_desc }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+                <td width="10%">
+                <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:10px;" onclick="analysisGenerate();"><i class="icofont-pencil-alt-1"></i></button>
+                </td>
+            </tr>
+        </table>
+        </div>
+
+        <div class="section-title">
+        {% if not rsAnalysis %}
+            <p class="text-center">내용이 없습니다! </p>
+        {% endif %}
+
+        {% for i in rsAnalysis %}
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr style="border-top:solid 1px #dddddd;">
+                    <td width="13%" align="center" style="padding-left:5px;">{{ i.type_desc }} </td>
+                    <td width="5%" align="center"><b>A{{ i.a_no }}</b> </td>
+                    <td width="41%">
+                        <input type="text" ano="{{ i.a_no }}" id="title_{{ i.a_no }}" value="{{ i.a_title }}" style="width:95%;border:solid 1px #e8e8e8;" onchange="updateAnalysis(this)" />
+                    </td>
+                    <td width="3%">
+                        <i class="icofont-search-document" onclick="location.href='/analysis_view?a_no={{ i.a_no }}';"></i>
+                    </td>
+                    <td width="15%" align="center">{{ i.a_date|date:'Y-m-d' }} </td>
+                    <td width="10%" align="center" style="padding:5px 0;white-space:nowrap;">
+                        {% if i.analysis_cnt > 0 %}
+                            <span class="btn btn-outline-primary" onclick="location.href='/analysis_step?a_no={{ i.a_no }}';"><i class="icofont-chart-flow"></i></span>
+                        {% else %}
+                            <span class="btn btn-outline-dark" onclick="location.href='/analysis_step?a_no={{ i.a_no }}';"><i class="icofont-chart-flow"></i></span>
+                        {% endif %}
+
+                        {% if i.reporting_cnt > 0 %}
+                        <span class="btn btn-outline-primary" onclick="location.href='/analysis_report?a_no={{ i.a_no }}';"><i class="icofont-notepad"></i></span>
+                        {% else %}
+                        <span class="btn btn-outline-dark" onclick="location.href='/analysis_report?a_no={{ i.a_no }}';"><i class="icofont-notepad"></i></span>
+                        {% endif %}
+
+                    </td>
+                    <td width="5%" align="right" style="padding:5px 10px 5px 0;">
+                        <i class="icofont-cut" onclick="location.href = '/analysis_toggle?a_no={{ i.a_no }}';"></i>
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+
+        </div>
+
+      </div>
+
+        <br><br>
+      <div class="container">
+
+        <div class="section-title">
+
+            <h2>User Manual</h2>
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr style="height:20px;">
+                    <td width="10%" align="center" style="padding-left:5px;"></td>
+                    <td width="20%" align="left" style="padding-left:5px;"></td>
+                    <td width="70%" align="left" style="padding-left:5px;"></td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right:5px;" ><i class="icofont-pencil-alt-1"></i></button>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">분석 생성</td>
+                    <td width="70%" align="left" style="padding-left:5px;">카테고리 선택하여 분석을 생성, 명칭은 자동 부여 후 리스트에서 수정합니다.</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <i class="icofont-search-document"></i>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">보기</td>
+                    <td width="70%" align="left" style="padding-left:5px;">선택된 분석의 상세 내용을 볼 수 있습니다.</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"><i class="icofont-chart-flow"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">분석 단계</td>
+                    <td width="70%" align="left" style="padding-left:5px;">단계별로 분석을 설정하고 메타데이터 정의, 데이터 처리 및 분석을 진행합니다.</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                        <span class="btn btn-outline-dark"><i class="icofont-notepad" aria-hidden="true"></i></span>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">보고서 작성</td>
+                    <td width="70%" align="left" style="padding-left:5px;">보고서를 작성하고 배포합니다.</td>
+                </tr>
+                <tr style="height:45px;border-top:solid 1px #dddddd;">
+                    <td width="10%" align="center" style="padding-left:5px;">
+                       <i class="icofont-cut"></i>
+                    </td>
+                    <td width="20%" align="left" style="padding-left:5px;">삭제</td>
+                    <td width="70%" align="left" style="padding-left:5px;">보고서를 삭제합니다.</td>
+                </tr>
+            </table>
+
+        </div>
+
+      </div>
+
+    </section><!-- End Our Skills Section -->
+
+  </main><!-- End #main -->
+
+{% include "footer.html" %}
+
+{% endblock %}

@@ -1,0 +1,474 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% csrf_token %}
+    <script src="{% static 'js/main
+    .js' %}"></script>
+    <script>
+    var xhr;
+
+    function createSection() {
+      section  = document.getElementById("section_title").value;
+      ano  = document.getElementById("a_no").value;
+      rno  = document.getElementById("r_no").value;
+
+      if(section == "") {
+        document.getElementById("section_title").focus();
+        return false;
+      }
+
+      strsql = '/reportedit_section?s_title=' + section + '&a_no=' + ano + '&r_no=' + rno;
+      //alert(strsql);
+      location.href = strsql;
+    }
+
+    function sectionImgSet(elem) {
+      var rh_no = elem.getAttribute("rh_no");
+      document.getElementById("image_rh_no").value = rh_no;
+
+      document.getElementById("sectionimage_block").style.display = "block";
+    }
+
+    function sectionTextShow(elem) {
+        sectionClear() ;
+        var rh_no = elem.getAttribute("rh_no");
+        var flag = elem.getAttribute("flag");
+        document.getElementById("text_flag").value = flag;
+        document.getElementById("rh_no").value = rh_no;
+
+        //alert(flag);
+
+        if (flag == "pre"){
+        var txt = document.getElementById("notepre_" + rh_no).innerHTML;
+        var ctitle = "앞 내용";
+        }
+        else if (flag == "post") {
+        var txt = document.getElementById("notepost_" + rh_no).innerHTML;
+        var ctitle = "뒤 내용";
+        }
+        else if (flag == "special") {
+        var txt = document.getElementById("notespecial_" + rh_no).innerHTML;
+        var ctitle = "강조";
+        }
+        else if (flag == "title") {
+        var txt = document.getElementById("notespecial_" + rh_no).innerHTML;
+        var ctitle = "강조";
+        }
+        else if (flag == "main") {
+        var txt = document.getElementById("notemain").innerHTML;
+        var ctitle = "보고서 요약";
+        }
+        else {
+            return false;
+        }
+        //alert(txt);
+        document.getElementById("note_box").value = txt;
+        document.getElementById("note_box_title").innerHTML = ctitle;
+
+        document.getElementById("text_flag").value = flag;
+
+        document.getElementById("sectiontext_block").style.display = "block";
+    }
+
+
+    function sectionClear() {
+        document.getElementById("text_flag").value = "";
+        document.getElementById("note_box").innerHTML = "";
+        document.getElementById("note_box_title").innerHTML = "";
+    }
+
+
+    // Ajax로 Section삭제하기
+    function sectionDelete(elem) {
+        var rhno = elem.getAttribute("rh_no");
+
+        if (confirm("삭제 하시겠습니까?") == false) {
+            return false;
+        }
+
+        var strurl = "/reportedit_delete?rhno=" + rhno;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                //elem.style.backgroundColor = "#E8E8E8";
+
+                document.getElementById("sectionbox_" + rhno).style.display = "none";
+
+                //var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+
+            }
+
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    function sectionTextWrite() {
+        var rno  = document.getElementById("r_no").value;
+        var rhno = document.getElementById("rh_no").value;
+        var flag = document.getElementById("text_flag").value;
+        var txt = document.getElementById("note_box").value;
+
+        //if(txt == "") {
+        //    document.getElementById("note_box").focus();
+        //    return false;
+        //}
+
+        var strurl = '/reportedit_write?rno=' + rno + '&rhno=' + rhno + '&flag=' + flag + '&txt=' + txt;
+        //alert(strurl);
+        //return false;
+        //location.href = strurl;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                //var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+
+                //elem.style.backgroundColor = "#E8E8E8";
+                if (flag == "title") {
+                    document.getElementById("notetitle_" + rhno).innerHTML = txt;
+                }
+                else if (flag == "pre") {
+                    document.getElementById("notepre_" + rhno).innerHTML = txt;
+                }
+                else if (flag == "special") {
+                    document.getElementById("notespecial_" + rhno).innerHTML = txt;
+                }
+                else if (flag == "post") {
+                    document.getElementById("notepost_" + rhno).innerHTML = txt;
+                }
+                else if (flag == "main") {
+                    document.getElementById("notemain").innerHTML = txt;
+                }
+
+            }
+
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    function releaseToggle(elem) {
+
+        if (confirm("배포상태를 바꾸시겠습니까?") == false) {
+            return false;
+        }
+
+        var rno = document.getElementById("r_no").value;
+        var rflag = document.getElementById("release_flag").value;
+        //alert(rflag);
+
+        var strurl = '/report_release?rno=' + rno;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                //var obj = JSON.parse(data);
+                //alert(obj.result_msg);
+                elem.style.color = "#FF6600";
+
+                if (rflag == "0") {
+                    elem.style.color = "#FF6600";
+                    document.getElementById("release_flag").value = "1"
+                }
+                else {
+                    elem.style.color = "#000000";
+                    document.getElementById("release_flag").value = "0"
+                }
+
+            }
+
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+
+    }
+
+    // Ajax로 제목 수정하기
+    function updateReport(elem) {
+        var rno = elem.getAttribute("rno");
+        var rtitle = elem.value;
+
+        var strurl = "/report_update?r_no=" + rno + "&r_title=" + rtitle;
+        //alert(strurl);
+        //return false;
+
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var data = xhr.responseText;
+
+                elem.style.backgroundColor = "#E8E8E8";
+                //alert(data.result_msg);
+            }
+        };
+        xhr.open("POST", strurl);
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(null);
+    }
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $("button").click(function(e){
+        alert("1");
+        e.preventDefault();
+        var ano = $(this).find('input').val();
+        $.ajax({
+            type: "POST",
+            url: "/analysis_toggle",
+            method: "POST",
+            data: {'ano': ano },
+            contentType: "application/json",
+            beforeSend: function () {
+                alert("Before Send")
+            },
+            success: function () {
+                alert("Success");
+                alert(response.result_msg);
+            },
+            error: function () {
+                alert("Error")
+            }
+        });
+
+    });
+
+    </script>
+{% endblock %}
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+  <main id="main">
+  <input type="hidden" id="r_no" value="{{ r_no }}" />
+  <input type="hidden" id="a_no" value="{{ a_no }}" />
+  <input type="hidden" id="rh_no" value="0" />
+  <input type="hidden" id="release_flag" value="{{ release_flag }}" />
+  <input type="hidden" id="text_flag" value="0" />
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{ title }}</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li><a href="/analysis">Analysis</a></li>
+            <li><a href="/analysis_report?a_no={{ a_no }}">Reporting</a></li>
+            <li>{{ title }}</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Blog Section ======= -->
+    <section class="blog" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+      <div class="container">
+
+        <div class="row">
+
+          <div class="col-lg-8 entries">
+
+            <article class="entry entry-single">
+
+              <h2 class="entry-title">
+                <a href="#">{{ report_title }} </a>
+              </h2>
+                <br>
+
+              <div class="entry-meta">
+                <ul>
+                    <span style="margin-right:20px"><i class="icofont-user"></i>&nbsp;&nbsp;{{ report_user }}</span>
+                        <span style="margin-right:20px"><i class="icofont-wall-clock"></i>&nbsp;&nbsp;{{ report_date }}</span>
+                        <span style="margin-right:20px">{{ detail_cnt }} Steps</span>
+                        <span style="margin-right:20px"><i class="icofont-text-width"  rh_no="0" flag="main" onclick="sectionTextShow(this);" style="color:#000;font-size:20px;"></i></span>
+                    <span style="margin-right:20px">
+                      {% if release_flag != "1" %}
+                        <i class="icofont-ui-user-group" onclick="releaseToggle(this);" style="color:#000;font-size:20px;"></i>
+                      {% else %}
+                        <i class="icofont-ui-user-group" onclick="releaseToggle(this);" style="color:#ff6600;font-size:20px;"></i>
+                      {% endif %}
+                    </span>
+                    <span style="margin-right:20px">
+                    <i class="icofont-search-document" style="color:#000;font-size:20px;"></i>
+                    </span>
+                </ul>
+              </div>
+            <br>
+
+              <div class="entry-content">
+                  <p><span id="notemain">{{ report_note }}</span></p>
+
+                {% for j in rsDetail %}
+                <div id="sectionbox_{{ j.rh_no }}">
+                      <div class="entry-meta" style="margin-top:30px;padding:5px;background-color:#000;">
+                      <table width="100%" border="0">
+                        <tr>
+                        <td><a href="#"><i class="icofont-hand-down"  rh_no="{{ j.rh_no }}" flag="title" onclick="sectionTextShow(this);"></i></a></td>
+                        <td><a href="#"><i class="icofont-text-width"  rh_no="{{ j.rh_no }}" flag="pre" onclick="sectionTextShow(this);"></i></a></td>
+                        <td><a href="#"><i class="icofont-underline"  rh_no="{{ j.rh_no }}" flag="special" onclick="sectionTextShow(this);"></i></a></td>
+                        <td><a href="#"><i class="icofont-text-width"  rh_no="{{ j.rh_no }}" flag="post" onclick="sectionTextShow(this);"></i></a></td>
+                        <td><a href="#"><i class="icofont-image" rh_no="{{ j.rh_no }}" style="color:#FFF;" onclick="sectionImgSet(this);"></a></i></td>
+                        <td><i class="icofont-wall-clock"></i><a href="#">{{ report_date }}</a></td>
+                        <td>...</td>
+                        <td><span style="cursor:pointer;" rh_no="{{ j.rh_no }}" onclick="sectionDelete(this);">X</span></td>
+                        </tr>
+                      </table>
+                    </div>
+
+                    <br>
+                    <h3><span id="notetitle_{{ j.rh_no }}">{{ j.s_title }}</span></h3><br>
+                    {% if j.s_note != "" %}
+                    <p>
+                        <span id="notepre_{{ j.rh_no }}">{{ j.s_note }}</span>
+                    </p>
+                    {% else %}
+                    <p>
+                        <span id="notepre_{{ j.rh_no }}"></span>
+                    </p>
+                    {% endif %}
+
+                    <br>
+
+                    {% if j.img_url != "" %}
+                    <img src="/static/photos/{{ j.img_url }}" class="img-fluid" alt="" style="width:100%;">
+
+                    {% endif %}
+
+                    <br><br>
+
+
+                    {% if j.s_note_special != "" %}
+                    <h4><i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                    <span id="notespecial_{{ j.rh_no }}">{{ j.s_note_special }}</span>
+              <i class="bx bxs-quote-alt-right quote-icon-right"></i></h4>
+                    {% else %}
+                      <p>
+                        <span id="notespecial_{{ j.rh_no }}"></span>
+                      </p>
+                    {% endif %}
+
+                    <br>
+
+                    {% if j.s_note_post != "" %}
+                    <p>
+                      <span id="notepost_{{ j.rh_no }}">{{ j.s_note_post }}</span>
+                    </p>
+                    {% else %}
+                    <p>
+                      <span id="notepost_{{ j.rh_no }}"></span>
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+              <br><br><br><br><Br>
+
+                <div class="float-right share">
+                  <a href="" title="Share on Twitter"><i class="icofont-twitter"></i></a>
+                  <a href="" title="Share on Facebook"><i class="icofont-facebook"></i></a>
+                  <a href="" title="Share on Instagram"><i class="icofont-instagram"></i></a>
+                </div>
+
+              </div>
+
+            </article><!-- End blog entry -->
+
+          </div><!-- End blog entries list -->
+
+          <div class="col-lg-4">
+
+            <div class="sidebar" style="top:190px;bottom:0;position:fixed;overflow-x:hidden;background-color:#fff">
+              <h3 class="sidebar-title">New section</h3>
+              <div class="sidebar-item search-form">
+                <form action="javascript:createSection();">
+                  <input type="text" id="section_title" value="">
+                  <button type="submit"><i class="icofont-plus"></i></button>
+                </form>
+              </div><!-- End sidebar search formn-->
+                <br>
+              <div id="sectionimage_block" style="display:none;">
+              <h3 class="sidebar-title">Section image upload</h3>
+              <div class="sidebar-item search-form">
+                <form method="POST" enctype="multipart/form-data" action="/report_sectionimage_upload">
+                    {% csrf_token %}
+                    <input type="file" name="ufile" >
+                    <input type="hidden" name="image_rh_no" id="image_rh_no" value="0">
+                    <input type="hidden" name="image_r_no" value="{{ r_no }}" />
+                    <input type="hidden" name="image_a_no" value="{{ a_no }}" />
+                    <button type="submit" class="btn btn-outline-primary" >업로드</button>
+                </form>
+              </div><!-- End sidebar search formn-->
+                  <br>
+              </div>
+              <div id="sectiontext_block" style="display:none;">
+              <h3 class="sidebar-title">Contents 입력 - <span id="note_box_title"></span> </h3>
+              <div class="sidebar-item search-form" style="text-align:center;">
+                <textarea rows="10" name="note_box" id="note_box" style="width:100%" ></textarea><br>
+
+                <button type="button" onclick="sectionTextWrite()"><i class="icofont-plus"></i> 저장</button>
+              </div><!-- End sidebar search formn-->
+              </div>
+                <br>
+
+              <h3 class="sidebar-title">Analysis Edits</h3>
+
+              {% if not rsReport %}
+              <p class="text-center">보고서가 없습니다.</p>
+              {% endif %}
+
+              <div class="sidebar-item categories">
+                <ul>
+                  {% for i in rsReport %}
+                  <li><a href="/report_edit?a_no={{ i.a_no }}&r_no={{ i.r_no }}">{{ i.report_title }} <span>({{ i.detail_cnt }})</span></a></li>
+                  {% endfor %}
+                </ul>
+              </div><!-- End sidebar categories-->
+
+            </div><!-- End sidebar -->
+
+          </div><!-- End blog sidebar -->
+
+        </div><!-- End row -->
+
+      </div><!-- End container -->
+
+    </section><!-- End Blog Section -->
+
+
+
+
+  </main><!-- End #main -->
+
+{% include "footer.html" %}
+
+{% endblock %}

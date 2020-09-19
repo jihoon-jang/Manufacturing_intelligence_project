@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+
+    </script>
+	<script src="{% static 'js/Chart.min.js' %}"></script>
+	<script src="{% static 'js/utils.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+
+    {% include "navbar.html" %}
+
+    <main id="main">
+
+
+            <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>Chart</h2>
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li>Chart</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+        <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>Chart</h2>
+          <p>년도별 월 실적 비교</p>
+        </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="200">
+            <div id="container" style="width: 75%;">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+
+          <div class="row" data-aos="fade-up" data-aos-delay="200">
+          </div>
+      </div>
+    </section><!-- End Services Section -->
+
+    </main>
+    {% include "footer.html" %}
+
+		<script>
+		 var MONTHS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+		var color = Chart.helpers.color;
+		var barChartData = {
+			labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			datasets: [{
+				label: '{{result07Title}}',
+				backgroundColor: color(window.chartColors.orange).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.orange,
+				borderWidth: 1,
+				data: [
+				{% for data in result07Data %}
+				'{{data}}',
+                {% endfor %}
+				]
+			}, {
+				label: '{{result06Title}}',
+				backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.green,
+				borderWidth: 1,
+				data: [
+				{% for data in result06Data %}
+				'{{data}}',
+                {% endfor %}
+				]
+			},  {
+				label: '{{result05Title}}',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				borderWidth: 1,
+				data:[
+				{% for data in result05Data %}
+				'{{data}}',
+                {% endfor %}
+				]
+			}]
+
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+					responsive: true,
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: false,
+						text: '월별 년도별 실적 비교.'
+					}
+				}
+			});
+
+		};
+
+		var colorNames = Object.keys(window.chartColors);
+
+
+	</script>
+{% endblock %}

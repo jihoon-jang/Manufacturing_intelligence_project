@@ -1,0 +1,49 @@
+{% load static %}
+ <header id="header" class="fixed-top">
+    <div class="container">
+
+      <div class="logo float-left">
+        <h1 class="text-light"><a href="/"><span>제조지능 PLATFORM</span></a></h1>
+        <!-- Uncomment below if you prefer to use an image logo -->
+        <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+      </div>
+
+      <nav class="nav-menu float-right d-none d-lg-block">
+        <ul>
+
+          {% if menucd == "REPORT" %}
+          <li class="active"><a href="/reporting?a_no=0">Reporting</a></li>
+          {% else %}
+          <li><a href="/reporting">Reporting</a></li>
+          {% endif %}
+
+              <li><a href="/miexecutives">Api</a></li>
+              <li class="drop-down"><a href="#">Chart</a>
+                <ul>
+                  <li><a href="/chart1">chart1</a></li>
+                  <li><a href="/chart2">chart2</a></li>
+                  <li><a href="/chart3">chart3(google)</a></li>
+                  <li><a href="/chart4">chart4(go)</a></li>
+                </ul>
+              </li>
+
+          <li class="drop-down"><a href="/miadmin">Admin</a>
+            <ul>
+              <li><a href="/miatype">Type</a></li>
+              <li><a href="/miauser">User</a></li>
+            </ul>
+          </li>
+
+              <li class="active"><a href="/analysis">Analysis</a></li>
+
+          {% if member_id is None %}
+          <li><a href="/login">LOGIN</a></li>
+          {% else %}
+          <li><a href="/login">[{{ member_id }}]</a></li>
+          {% endif %}
+
+        </ul>
+      </nav><!-- .nav-menu -->
+
+    </div>
+    </header><!-- End Header -->

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['달', '2005년 실적', '2006년 실적', '2007년 계획', '2007년 실적'],
+          ['1월', {{rsSales4.0.0}}, {{rsSales3.0.0}}, {{rsSales2.0.0}}, {{rsSales1.0.0}}],
+          ['2월', {{rsSales4.0.1}}, {{rsSales3.0.1}}, {{rsSales2.0.1}}, {{rsSales1.0.1}}],
+          ['3월', {{rsSales4.0.2}}, {{rsSales3.0.2}}, {{rsSales2.0.2}}, {{rsSales1.0.2}}],
+          ['4월', {{rsSales4.0.3}}, {{rsSales3.0.3}}, {{rsSales2.0.3}}, {{rsSales1.0.3}}],
+          ['5월', {{rsSales4.0.4}}, {{rsSales3.0.4}}, {{rsSales2.0.4}}, {{rsSales1.0.4}}],
+          ['6월', {{rsSales4.0.5}}, {{rsSales3.0.5}}, {{rsSales2.0.5}}, {{rsSales1.0.5}}],
+          ['7월', {{rsSales4.0.6}}, {{rsSales3.0.6}}, {{rsSales2.0.6}}, {{rsSales1.0.6}}],
+          ['8월', {{rsSales4.0.7}}, {{rsSales3.0.7}}, {{rsSales2.0.7}}, {{rsSales1.0.7}}],
+          ['9월', {{rsSales4.0.8}}, {{rsSales3.0.8}}, {{rsSales2.0.8}}, {{rsSales1.0.8}}],
+          ['10월', {{rsSales4.0.9}}, {{rsSales3.0.9}}, {{rsSales2.0.9}}, {{rsSales1.0.9}}],
+          ['11월', {{rsSales4.0.10}}, {{rsSales3.0.10}}, {{rsSales2.0.10}}, {{rsSales1.0.10}}],
+          ['12월', {{rsSales4.0.11}}, {{rsSales3.0.11}}, {{rsSales2.0.11}}, {{rsSales1.0.11}}]
+        ]);
+
+        var options = {
+          chart: {
+            title: '년도별 월 실적 비교',
+            subtitle: '2005-2007 실적 및 계획',
+          }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+       </script>
+{% endblock %}
+
+{% block body %}
+
+    {% include "navbar.html" %}
+
+    <main id="main">
+
+
+            <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>Chart</h2>
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li>Chart</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+        <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>Chart</h2>
+        </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="200">
+            <div id="container" style="width: 75%;">
+                <div id="columnchart_material" style="width: 800px; height: 500px;"></div>
+            </div>
+        </div>
+
+          <div class="row" data-aos="fade-up" data-aos-delay="200">
+          </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+    </main>
+    {% include "footer.html" %}
+
+{% endblock %}
