@@ -3,7 +3,7 @@ from django.shortcuts import render
 def chart1(request):
 
     import pymysql
-    dbCon = pymysql.connect()
+    dbCon = pymysql.connect( )
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -40,12 +40,14 @@ def chart1(request):
 def chart2(request):
 
     import pymysql
-    dbCon = pymysql.connect()
+    dbCon = pymysql.connect( )
     cursor = dbCon.cursor()
 
     with dbCon:
         cursor.execute('SELECT * FROM chart2 where year = "2007년실적"')
         result07 = cursor.fetchone()
+        cursor.execute('SELECT * FROM chart2 where year = "2007년계획"')
+        plan07 = cursor.fetchone()
         cursor.execute('SELECT * FROM chart2 where year = "2006년실적"')
         result06 = cursor.fetchone()
         cursor.execute('SELECT * FROM chart2 where year = "2005년실적"')
@@ -56,6 +58,8 @@ def chart2(request):
         result05Data = list(result05)[3:]
         result06Title = list(result06)[1]
         result06Data = list(result06)[3:]
+        plan07Title = list(plan07)[1]
+        plan07Data = list(plan07)[3:]
 
     return render(request, "chart2.html", {
         'result07Title': result07Title,
@@ -64,12 +68,14 @@ def chart2(request):
         'result06Data': result06Data,
         'result05Title': result05Title,
         'result05Data': result05Data,
+        'plan07Title': plan07Title,
+        'plan07Data': plan07Data,
     })
 
 
 def chart3(request):
     import pymysql
-    dbCon = pymysql.connect()
+    dbCon = pymysql.connect( )
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -94,7 +100,7 @@ def chart3(request):
 def chart4(request):
     import pymysql
 
-    dbCon = pymysql.connect()
+    dbCon = pymysql.connect( )
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -120,47 +126,87 @@ def chart4(request):
     amount_KOR = list(KOR)[0::2]
     cost_KOR = list(KOR)[1::2]
 
-    TWN_list = []
-    SCN_list = []
-    NCN_list = []
-    SGP_list = []
-    KOR_list = []
+    TWN_list_a = []
+    SCN_list_a = []
+    NCN_list_a = []
+    SGP_list_a = []
+    KOR_list_a = []
+    TWN_list_c = []
+    SCN_list_c = []
+    NCN_list_c = []
+    SGP_list_c = []
+    KOR_list_c = []
 
     for att in range(4, 9):
         line = []
         for mon in range(12):
             line.append(amount_TWN[mon][att])
-        TWN_list.append(line)
+        TWN_list_a.append(line)
 
     for att in range(4, 9):
         line = []
         for mon in range(12):
             line.append(amount_SCN[mon][att])
-        SCN_list.append(line)
+        SCN_list_a.append(line)
 
     for att in range(4, 9):
         line = []
         for mon in range(12):
             line.append(amount_NCN[mon][att])
-        NCN_list.append(line)
+        NCN_list_a.append(line)
 
     for att in range(4, 9):
         line = []
         for mon in range(12):
             line.append(amount_SGP[mon][att])
-        SGP_list.append(line)
+        SGP_list_a.append(line)
 
     for att in range(4, 9):
         line = []
         for mon in range(12):
             line.append(amount_KOR[mon][att])
-        KOR_list.append(line)
+        KOR_list_a.append(line)
+
+    for att in range(4, 9):
+        line = []
+        for mon in range(12):
+            line.append(cost_TWN[mon][att])
+        TWN_list_c.append(line)
+
+    for att in range(4, 9):
+        line = []
+        for mon in range(12):
+            line.append(cost_SCN[mon][att])
+        SCN_list_c.append(line)
+
+    for att in range(4, 9):
+        line = []
+        for mon in range(12):
+            line.append(cost_NCN[mon][att])
+        NCN_list_c.append(line)
+
+    for att in range(4, 9):
+        line = []
+        for mon in range(12):
+            line.append(cost_SGP[mon][att])
+        SGP_list_c.append(line)
+
+    for att in range(4, 9):
+        line = []
+        for mon in range(12):
+            line.append(cost_KOR[mon][att])
+        KOR_list_c.append(line)
 
 
     return render(request, "chart4.html", {
-        'KOR_list': KOR_list,
-        'SGP_list': SGP_list,
-        'NCN_list': NCN_list,
-        'SCN_list': SCN_list,
-        'TWN_list': TWN_list,
+        'KOR_list_a': KOR_list_a,
+        'SGP_list_a': SGP_list_a,
+        'NCN_list_a': NCN_list_a,
+        'SCN_list_a': SCN_list_a,
+        'TWN_list_a': TWN_list_a,
+        'KOR_list_c': KOR_list_c,
+        'SGP_list_c': SGP_list_c,
+        'NCN_list_c': NCN_list_c,
+        'SCN_list_c': SCN_list_c,
+        'TWN_list_c': TWN_list_c,
     })

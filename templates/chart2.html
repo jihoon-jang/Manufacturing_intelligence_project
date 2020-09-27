@@ -61,9 +61,19 @@
 		var barChartData = {
 			labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
 			datasets: [{
-				label: '{{result07Title}}',
+				label: '{{plan07Title}}',
 				backgroundColor: color(window.chartColors.orange).alpha(0.5).rgbString(),
 				borderColor: window.chartColors.orange,
+				borderWidth: 1,
+				data: [
+				{% for data in plan07Data %}
+				'{{data}}',
+                {% endfor %}
+				]
+			}, {
+				label: '{{result07Title}}',
+				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.red,
 				borderWidth: 1,
 				data: [
 				{% for data in result07Data %}
@@ -80,7 +90,7 @@
 				'{{data}}',
                 {% endfor %}
 				]
-			},  {
+			},   {
 				label: '{{result05Title}}',
 				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
 				borderColor: window.chartColors.blue,
