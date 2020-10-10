@@ -185,7 +185,7 @@
 
     function dataTableGenerate(elem) {
 
-        if (confirm("Table이 삭제되고 새로 생성됨니다. 재생성하시겠습니까?") == false) {
+        if (confirm("Table이 존재할 시, 삭제되고 새로 생성됩니다. 생성하시겠습니까?") == false) {
             return false;
         }
 
@@ -301,7 +301,7 @@
                         <input type="radio" id="columnin_type_float" name="columnin_type" >Float
                     </td>
                     <td width="6%" align="center" style="padding:3px 5px;">
-                        <span class="btn btn-outline-dark"  sno="{{ step_no }}" onclick="columnInGenerate(this);"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                        <span class="btn btn-outline-dark"  sno="{{ step_no }}" onclick="columnInGenerate(this);"><i class="icofont-plus" aria-hidden="true"></i></span>
                     </td>
                     <td width="22%" align="center" style="padding:3px 5px;">
                         <input type="text" id="columnout_name" value="" style="width:100%;border:solid 1px #888888;" />
@@ -312,7 +312,7 @@
                         <input type="radio" id="columnout_type_float" name="columnout_type">Float
                     </td>
                     <td width="6%" align="center" style="padding:3px 5px;">
-                        <span class="btn btn-outline-dark"  sno="{{ step_no }}"  onclick="columnOutGenerate(this);"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                        <span class="btn btn-outline-dark"  sno="{{ step_no }}"  onclick="columnOutGenerate(this);"><i class="icofont-plus" aria-hidden="true"></i></span>
                     </td>
                 </tr>
             </table>
@@ -401,7 +401,7 @@
                     <td width="22%" align="center" style="padding:3px 5px;">
                     </td>
                     <td width="6%" align="center" style="padding:3px 5px;">
-                        <span class="btn btn-outline-dark" sno="{{ step_no }}" flag="IN" onclick="dataTableGenerate(this)"><i class="fa fa-table" aria-hidden="true"></i></span>
+                        <span class="btn btn-outline-dark" sno="{{ step_no }}" flag="IN" onclick="dataTableGenerate(this)"><i class="icofont-table" aria-hidden="true"></i></span>
                     </td>
                     <td width="22%" align="center" style="padding:3px 5px;">
                         <b>tdata_ {{ step_no }} _out</b>
@@ -409,7 +409,7 @@
                     <td width="22%" align="center" style="padding:3px 5px;">
                     </td>
                     <td width="6%" align="center" style="padding:3px 5px;">
-                        <span class="btn btn-outline-dark" sno="{{ step_no }}" flag="OUT" onclick="dataTableGenerate(this)"><i class="fa fa-table" aria-hidden="true"></i></span>
+                        <span class="btn btn-outline-dark" sno="{{ step_no }}" flag="OUT" onclick="dataTableGenerate(this)"><i class="icofont-table" aria-hidden="true"></i></span>
                     </td>
                 </tr>
                 <tr height="60">
@@ -439,14 +439,14 @@
                 </tr>
                 <tr style="height:45px;border-top:solid 1px #dddddd;">
                     <td width="10%" align="center" style="padding-left:5px;">
-                        <span class="btn btn-outline-dark" ><i class="fa fa-table" aria-hidden="true"></i></span>
+                        <span class="btn btn-outline-dark" ><i class="icofont-table" aria-hidden="true"></i></span>
                     </td>
                     <td width="20%" align="left" style="padding-left:5px;">Table생성</td>
                     <td width="70%" align="left" style="padding-left:5px;">컬럼Meta 파일로 Table생성 <br><b>※ 테이블이 있으면 삭제하고 생성됩니다.</b></td>
                 </tr>
                 <tr style="height:45px;border-top:solid 1px #dddddd;">
                     <td width="10%" align="center" style="padding-left:5px;">
-                        <span class="btn btn-outline-dark"  ><i class="fa fa-plus" aria-hidden="true"></i></span>
+                        <span class="btn btn-outline-dark"  ><i class="icofont-plus" aria-hidden="true"></i></span>
                     </td>
                     <td width="20%" align="left" style="padding-left:5px;">Create</td>
                     <td width="70%" align="left" style="padding-left:5px;">컬럼Meta 생성</td>

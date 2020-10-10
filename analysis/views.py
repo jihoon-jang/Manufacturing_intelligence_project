@@ -8,6 +8,7 @@ from django.db import connection
 from analysis.models import CMAnalysis, CHUploadHistory, CHAnalysisStep, CMType, CHReport, CHAnalysisHistory, CHReportDetail, CHReportComment, CSMetaData, csmetadata2
 import subprocess
 import sys
+import os.path
 import datetime
 import random
 import requests
@@ -18,7 +19,7 @@ from django.core import serializers
 import json
 
 from sqlalchemy import create_engine
-DB_URL = 'mysql+mysqldb://root:1q2w3e4r5!@223.194.46.65:3306/cidb?charset=utf8'
+DB_URL = 'mysql+mysqldb://root:jhw1996@127.0.0.1:3307/jejodb?charset=utf8'
 engine = create_engine(DB_URL)
 
 from django.views.decorators.csrf import csrf_exempt
@@ -304,15 +305,19 @@ def analysis_upload(request):
     context['rsMetaOUT'] = rsMetaOUT
 
     import pymysql
-    dbCon = pymysql.connect('223.194.46.65', 'root', '1q2w3e4r5!', 'cidb')
+    dbCon = pymysql.connect(
+        host = '127.0.0.1',
+        port = 3307,
+        user = 'root',
+        passwd = 'jhw1996',
+        db = 'jejodb')
     cursor = dbCon.cursor()
 
-    with dbCon:
-        cursor.execute("select * from tdata_" + str(sno) + "_in")
-        rsDataIN = cursor.fetchall()
+    cursor.execute("select * from tdata_" + str(sno) + "_in")
+    rsDataIN = cursor.fetchall()
 
-        cursor.execute("select * from tdata_" + str(sno) + "_out")
-        rsDataOUT = cursor.fetchall()
+    cursor.execute("select * from tdata_" + str(sno) + "_out")
+    rsDataOUT = cursor.fetchall()
 
     context['rsDataIN'] = rsDataIN
     context['rsDataOUT'] = rsDataOUT
@@ -482,7 +487,12 @@ def analysis_metasave(request):
     max_row = sheet.max_row
 
     import pymysql
-    dbCon = pymysql.connect('223.194.46.65', 'root', '1q2w3e4r5!', 'cidb')
+    dbCon = pymysql.connect(
+        host = '127.0.0.1',
+        port = 3307,
+        user = 'root',
+        passwd = 'jhw1996',
+        db = 'jejodb')
     cursor = dbCon.cursor()
 
     if max_row > 2:
@@ -557,10 +567,11 @@ def analysis_code(request):
             context['file_contents'] = ""
         else:
             file1 = "afiles/" + rsStep.upload_file + ".py"
+            if os.path.isfile(file1) :
 
-            f = open(file1, "r", encoding='utf8')
+                f = open(file1, "r", encoding='utf8')
 
-            context['file_contents'] = f.read()
+                context['file_contents'] = f.read()
 
     else:
         context['step_title'] = ""
@@ -714,7 +725,10 @@ def data_column_generate(request):
     data = {}
 
     with connection.cursor() as c1:
-        c1.execute("SELECT MAX(order_no) + 1 AS order_no FROM cs_meta_data WHERE step_no = %s", { sno })
+        strsql = "SELECT MAX(order_no) + 1 AS order_no FROM cs_meta_data WHERE step_no = " + str(sno)
+        print(strsql)
+        c1.execute(strsql)
+
         rows = c1.fetchone()
 
         o_no = rows[0]

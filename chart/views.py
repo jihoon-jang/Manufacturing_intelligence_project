@@ -1,9 +1,9 @@
 from django.shortcuts import render
 
-def chart1(request):
 
+def chart1(request):
     import pymysql
-    dbCon = pymysql.connect( )
+    dbCon = pymysql.connect()
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -24,7 +24,6 @@ def chart1(request):
         plan07Title = list(plan07)[1]
         plan07Data = list(plan07)[3:]
 
-
     return render(request, "chart1.html", {
         'result07Title': result07Title,
         'result07Data': result07Data,
@@ -38,9 +37,8 @@ def chart1(request):
 
 
 def chart2(request):
-
     import pymysql
-    dbCon = pymysql.connect( )
+    dbCon = pymysql.connect()
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -75,7 +73,7 @@ def chart2(request):
 
 def chart3(request):
     import pymysql
-    dbCon = pymysql.connect( )
+    dbCon = pymysql.connect()
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -96,11 +94,10 @@ def chart3(request):
     })
 
 
-
 def chart4(request):
     import pymysql
 
-    dbCon = pymysql.connect( )
+    dbCon = pymysql.connect()
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -197,7 +194,6 @@ def chart4(request):
             line.append(cost_KOR[mon][att])
         KOR_list_c.append(line)
 
-
     return render(request, "chart4.html", {
         'KOR_list_a': KOR_list_a,
         'SGP_list_a': SGP_list_a,
@@ -209,4 +205,14 @@ def chart4(request):
         'NCN_list_c': NCN_list_c,
         'SCN_list_c': SCN_list_c,
         'TWN_list_c': TWN_list_c,
+        'amount_TWN': amount_TWN,
+        'cost_TWN': cost_TWN,
+        'amount_SCN': amount_SCN,
+        'cost_SCN': cost_SCN,
+        'amount_NCN': amount_NCN,
+        'cost_NCN': cost_NCN,
+        'amount_SGP': amount_SGP,
+        'cost_SGP': cost_SGP,
+        'amount_KOR': amount_KOR,
+        'cost_KOR': cost_KOR,
     })

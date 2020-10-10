@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+    
+    <script src="{% static 'js/main.js' %}"></script>
+    
+{% endblock %}
+
+{% block body %}
+
+{% include "navbar.html" %}
+
+  <input type="hidden" id="r_no" value="{{ r_no }}" />
+  <input type="hidden" id="a_no" value="{{ a_no }}" />
+  <input type="hidden" id="rh_no" value="0" />
+  <input type="hidden" id="release_flag" value="{{ release_flag }}" />
+  <input type="hidden" id="text_flag" value="0" />
+
+
+
+    <!-- ======= About Us Section ======= -->
+    <section class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>APIview</h3>
+          <ol>
+            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+            <li><a href="/apihome">APIhome</a></li>
+            <li>APIview</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End About Us Section -->
+
+    <!-- ======= Blog Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container">
+
+        <div class="row">
+
+          <div class="col-lg-8 entries">
+
+            <article class="entry entry-single">
+
+              <h2 class="entry-title">
+                <a href="#">{{ report_title }} </a>
+              </h2>
+
+                <br>
+              <div class="entry-meta">
+                  <ul>
+                    <span style="margin-right:20px"><i class="icofont-user"></i> 유저이름 </span>
+                    <span style="margin-right:20px"><i class="icofont-wall-clock"></i>{{ report_date }}</span>                   
+                  </ul>
+              </div>
+
+                <br>
+              <div class="entry-content">
+                  <p><span id="notemain">{{ report_note }}</span></p>
+
+                  <br>
+                {% for i in dtAPI %}
+                <div >
+                    <h3><span>{{ i.0 }}</span></h3><br>
+                    <p>
+                        <span>{{ i.1 }}</span>
+                    </p>
+                    <p>
+                        <span">{{ i.2 }}</span>
+                    </p>
+                    <p>
+                      <span">{{ i.3 }}</span>
+                   </p>
+                </div>
+                {% endfor %}
+
+              <br><br><br><br><Br>
+
+              <div class="entry-footer clearfix">
+                <div class="float-left">
+                  <i class="icofont-folder"></i>
+                  <ul class="cats">
+                    <li><a href="#">Business</a></li>
+                  </ul>
+
+                  <i class="icofont-tags"></i>
+                  <ul class="tags">
+                    <li><a href="#">Creative</a></li>
+                  </ul>
+                </div>
+
+                <div class="float-right share">
+                  <a href="" title="Share on Twitter"><i class="icofont-twitter"></i></a>
+                  <a href="" title="Share on Facebook"><i class="icofont-facebook"></i></a>
+                  <a href="" title="Share on Instagram"><i class="icofont-instagram"></i></a>
+                </div>
+              </div>
+
+            </article><!-- End blog entry -->
+
+          </div><!-- End blog entries list -->
+
+        </div><!-- End row -->
+
+      </div><!-- End container -->
+
+    </section><!-- End Blog Section -->
+
+
+{% include "footer.html" %}
+
+{% endblock %}
