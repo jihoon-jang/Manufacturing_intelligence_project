@@ -5,7 +5,8 @@
 총 5명의 팀원으로 구성되어 있습니다.
 
 ## 역할 
-  - 본인(팀장) : 데이터베이스 설계, 차트를 이용한 데이터 시각화(billboard.js, Chart.js, Google Chart 등)
+  - 본인(팀장) : 데이터베이스 설계, 차트를 이용한 데이터 시각화(billboard.js, Chart.js, Google Chart 등),</br>
+                GraphQL API를 통한 차트 제작, 테이블 제작.
   - 팀원 1 : 마크다운 보고서 작성 기능 개발
   - 팀원 2 : GraphQL을 통한 API 개발
   - 팀원 3 : 현장실습으로 인해 프로젝트의 서류화
@@ -47,4 +48,4 @@
 
 **국가별 월 데이터 조회 - 수정 필요**
 
-![country_1](https://user-images.githubusercontent.com/55784520/94361612-7e892400-00f0-11eb-9d98-1bececfefec8.PNG)
+![통합](https://user-images.githubusercontent.com/55784520/95655171-6083e080-0b40-11eb-815f-f15b76458638.PNG)
