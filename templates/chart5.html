@@ -69,6 +69,19 @@
                         <input type="radio" name="options" id="chkor" checked>KOR
                     </label>
                 </div>
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-secondary active">
+                        <input type="radio" name="options" id="year18">2018년
+                    </label>
+                    <label class="btn btn-secondary">
+                        <input type="radio" name="options" id="year19">2019년
+                    </label>
+                    <label class="btn btn-secondary">
+                        <input type="radio" name="options" id="year20" checked>2020년
+                    </label>
+                </div>
+
+
                 <div id="container" style="width: 90%;">
                     <div id="combinationChartA"></div>
 
@@ -84,14 +97,14 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for a in amount_KOR %}
+                        {% for a in amount %}
                         <tr>
-                            <td>{{a.3}}월</td>
-                            <td>{{a.4}}</td>
-                            <td>{{a.5}}</td>
-                            <td>{{a.6}}</td>
-                            <td>{{a.7}}</td>
-                            <td>{{a.8}}%</td>
+                            <td>{{a.iDate}}월</td>
+                            <td>{{a.iInit}}</td>
+                            <td>{{a.iInput}}</td>
+                            <td>{{a.iOutput}}</td>
+                            <td>{{a.iClose}}</td>
+                            <td>{{a.iRate}}%</td>
                         </tr>
                         {% endfor %}
                         </tbody>
@@ -110,13 +123,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for c in cost_KOR %}
+                        {% for c in cost %}
                         <tr>
-                            <td>{{c.3}}월</td>
-                            <td>{{c.4}}원</td>
-                            <td>{{c.5}}원</td>
-                            <td>{{c.6}}원</td>
-                            <td>{{c.7}}원</td>
+                            <td>{{c.iDate}}월</td>
+                            <td>{{c.iInit}}원</td>
+                            <td>{{c.iInput}}원</td>
+                            <td>{{c.iOutput}}원</td>
+                            <td>{{c.iClose}}원</td>
                         </tr>
                         {% endfor %}
                         <tbody>
@@ -124,16 +137,19 @@
                 </div>
             </div>
 
-            <div class="row" data-aos="fade-up" data-aos-delay="200">
-            </div>
+                <div class="row" data-aos="fade-up" data-aos-delay="200">
+                </div>
 
-        </div>
+            </div>
     </section><!-- End Services Section -->
 
 </main>
 {% include "footer.html" %}
 
 <script>
+let code = "KOR";
+let year = 2020;
+
         var chartA = bb.generate({
         title: {
     text: "수량 그래프"
@@ -642,6 +658,7 @@ var chartC = bb.generate({
 
 
 		});
+
 
 
 

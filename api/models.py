@@ -10,8 +10,8 @@ class inventory(models.Model):
     i_close = models.IntegerField(db_column='inv_close', default=0)
     i_input = models.IntegerField(db_column='inv_input', default=0)
     i_output = models.IntegerField(db_column='inv_output', default=0)
-    i_rate = models.IntegerField(db_column='inv_rate', default=0)
-    i_predict = models.IntegerField(db_column='invrate_predict', default=0)
+    i_rate = models.FloatField(db_column='inv_rate', default=0)
+    i_predict = models.FloatField(db_column='invrate_predict', default=0)
 
     class Meta:
         managed = False

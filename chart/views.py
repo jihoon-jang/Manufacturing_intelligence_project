@@ -1,5 +1,6 @@
 from django.shortcuts import render
-
+import pandas as pd
+import requests
 
 def chart1(request):
     import pymysql
@@ -215,4 +216,45 @@ def chart4(request):
         'cost_SGP': cost_SGP,
         'amount_KOR': amount_KOR,
         'cost_KOR': cost_KOR,
+    })
+
+
+
+def chart5(request):
+    query1 = '''{
+          allInven {
+            iNo
+            bsnscd
+            measures
+            iDate
+            iInit
+            iClose
+            iInput
+            iOutput
+            iRate
+            iPredict
+          }
+        }
+        '''
+    url = 'http://127.0.0.1:8000/graphql/'
+    r = requests.get(url, json={'query': query1})
+    Jdata = r.json()
+    rawData = Jdata['data']['allInven']
+
+    amount = []
+    cost = []
+
+    for data in rawData:
+        if'KOR' == data.get('bsnscd') and '2020' in data.get('iDate') and 'amount' == data.get('measures'):
+            amount.append(data)
+        elif'KOR' == data.get('bsnscd') and '2020' in data.get('iDate') and 'cost' == data.get('measures'):
+            cost.append(data)
+
+    for a in amount:
+        print(a)
+    print(cost)
+
+    return render(request, "chart5.html", {
+        'amount': amount,
+        'cost': cost,
     })

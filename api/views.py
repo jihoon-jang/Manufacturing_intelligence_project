@@ -21,6 +21,8 @@ def apihome(request):
 
     rsAPI=[tuple(r) for r in df.to_numpy()]
 
+    print(Jdata)
+
     return render(request, "apihome.html",{
         'rsAPI':rsAPI,
     }) 
