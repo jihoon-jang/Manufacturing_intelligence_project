@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import pandas as pd
 import requests
+import json
 
 def chart1(request):
     import pymysql
@@ -222,7 +223,7 @@ def chart4(request):
 
 def chart5(request):
     query1 = '''{
-          allInven {
+          dateInven(bsnscd:"KOR") {
             iNo
             bsnscd
             measures
@@ -239,22 +240,96 @@ def chart5(request):
     url = 'http://127.0.0.1:8000/graphql/'
     r = requests.get(url, json={'query': query1})
     Jdata = r.json()
-    rawData = Jdata['data']['allInven']
+    rawData = Jdata['data']['dateInven']
+    df=pd.DataFrame(rawData)
+    rsAPI=[tuple(r) for r in df.to_numpy()]
 
     amount = []
     cost = []
 
-    for data in rawData:
-        if'KOR' == data.get('bsnscd') and '2020' in data.get('iDate') and 'amount' == data.get('measures'):
+    for data in rsAPI:
+        if'2020' in data[3] and 'amount' == data[2]:
             amount.append(data)
-        elif'KOR' == data.get('bsnscd') and '2020' in data.get('iDate') and 'cost' == data.get('measures'):
+        elif'2020' in data[3] and 'cost' == data[2]:
             cost.append(data)
 
+    context = {}
+    amountTable = '''
+    <table id="amountTable" class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+    '''
+
+    for key, value in rawData[0].items():
+        amountTable += '<th><B>%s</B></th>' % key
+    amountTable += '''
+    </tr>
+    </thead>
+    <tbody>
+    '''
     for a in amount:
-        print(a)
-    print(cost)
+        amountTable += '<tr>'
+        for i in range(0,len(a)):
+            amountTable += '<td>%s</td>' % a[i]
+        amountTable += '</tr>'
+    amountTable += '''
+    </tbody>
+    </table>
+    '''
+
+
+    costTable = '''
+    <table id="costTable" class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+    '''
+
+    for key, value in rawData[0].items():
+        costTable += '<th><B>%s</B></th>' % key
+    costTable += '''
+    </tr>
+    </thead>
+    <tbody>
+    '''
+    for c in cost:
+        costTable += '<tr>'
+        for i in range(0,len(c)):
+            costTable += '<td>%s</td>' % c[i]
+        costTable += '</tr>'
+    costTable += '''
+    </tbody>
+    </table>
+    '''
+
+    amountChartCol = "["
+
+    index = 0
+    for key, value in rawData[0].items():
+        if index >= 4 and index <= 8:
+            amountChartCol += '["%s",' % key
+            for a in amount:
+                amountChartCol += '%s,' % a[index]
+            amountChartCol += '],'
+        index += 1
+    amountChartCol += '],'
+
+    costChartCol = "["
+
+    index = 0
+    for key, value in rawData[0].items():
+        if index >= 4 and index <= 8:
+            costChartCol += '["%s",' % key
+            for a in amount:
+                costChartCol += '%s,' % a[index]
+            costChartCol += '],'
+        index += 1
+    costChartCol += '],'
+
+    context["amountTable"] = amountTable
+    context["costTable"] = costTable
+    context["amountChartCol"] = amountChartCol
+    context["costChartCol"] = costChartCol
 
     return render(request, "chart5.html", {
-        'amount': amount,
-        'cost': cost,
+        'context':context
     })

@@ -10,11 +10,11 @@ class invenType(DjangoObjectType):
 
 class invenQuery(graphene.ObjectType):
     all_inven = graphene.List(invenType)
-#    DTReport = graphene.Field(all_DTReports, rNo=graphene.Int())
+    date_inven = graphene.Field(all_inven, bsnscd=graphene.String())
 
 
     def resolve_all_inven(self, info, **kwargs):
         return inventory.objects.all()
 
-#    def resolve_DTReport(self, info, rNo):
-#        return CHReportDetail.objects.filter(r_no=rNo)
+    def resolve_date_inven(self, info, bsnscd):
+        return inventory.objects.filter(bsnscd=bsnscd)

@@ -85,62 +85,19 @@
                 <div id="container" style="width: 90%;">
                     <div id="combinationChartA"></div>
 
-                    <table id="amountTable" class="table table-striped">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th><B>월</B></th>
-                            <th><B>기초</B></th>
-                            <th><B>입고</B></th>
-                            <th><B>출고</B></th>
-                            <th><B>기말</B></th>
-                            <th><B>재고회전율</B></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for a in amount %}
-                        <tr>
-                            <td>{{a.iDate}}월</td>
-                            <td>{{a.iInit}}</td>
-                            <td>{{a.iInput}}</td>
-                            <td>{{a.iOutput}}</td>
-                            <td>{{a.iClose}}</td>
-                            <td>{{a.iRate}}%</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                    {{context.amountTable|safe}}
 
                     <div id="combinationChartC"></div>
 
-                    <table id="costTable" class="table table-striped">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th><B>월</B></th>
-                            <th><B>기초</B></th>
-                            <th><B>입고</B></th>
-                            <th><B>출고</B></th>
-                            <th><B>기말</B></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for c in cost %}
-                        <tr>
-                            <td>{{c.iDate}}월</td>
-                            <td>{{c.iInit}}원</td>
-                            <td>{{c.iInput}}원</td>
-                            <td>{{c.iOutput}}원</td>
-                            <td>{{c.iClose}}원</td>
-                        </tr>
-                        {% endfor %}
-                        <tbody>
-                    </table>
+                    {{context.costTable|safe}}
+
                 </div>
             </div>
 
-                <div class="row" data-aos="fade-up" data-aos-delay="200">
-                </div>
-
+            <div class="row" data-aos="fade-up" data-aos-delay="200">
             </div>
+
+        </div>
     </section><!-- End Services Section -->
 
 </main>
@@ -154,58 +111,32 @@ let year = 2020;
         title: {
     text: "수량 그래프"
   },
-                data: {
-                        columns: [
-        ["입고",
-                {% for data in KOR_list_a.1 %}
-        '{{data}}',
-                {% endfor %}
-	],
-        ["출고",
-                {% for data in KOR_list_a.2 %}
-        '{{data}}',
-                {% endfor %}
-	],
-                                ["기초",
-                                        {% for data in KOR_list_a.0 %}
-        '{{data}}',
-        {% endfor %}
-	],
-        ["기말",
-                {% for data in KOR_list_a.3 %}
-        '{{data}}',
-                {% endfor %}
-	],
-        ["재고회전",
-                {% for data in KOR_list_a.4 %}
-        '{{data}}',
-                {% endfor %}
-    ],
-    ],
-        type: "bar",
-                types: {
-                기초: "line",
-                        기말: "line",
-                        재고회전: "spline"
-        },
-        groups: [
-                [
-                        "입고",
-                        "출고"
-                ]
-        ],
-  axes: {
-  재고회전: "y2"
-  },
-  colors: {
-      입고: "#f39c12",
-      출고: "#16a085",
-      기초: "#c0392b",
-      기말: "#2980b9",
-      재고회전:"#2ecc71"
-          },
-   
-  },
+data: {
+    columns: {{context.amountChartCol|safe}}
+    type: "bar",
+    types: {
+    기초: "line",
+    기말: "line",
+    재고회전: "spline"
+    },
+    groups: [
+    [
+    "입고",
+    "출고"
+    ]
+],
+axes: {
+재고회전: "y2"
+},
+colors: {
+입고: "#f39c12",
+출고: "#16a085",
+기초: "#c0392b",
+기말: "#2980b9",
+재고회전:"#2ecc71"
+},
+
+},
         axis: {
          y:{
          label:"수량"
@@ -240,28 +171,7 @@ var chartC = bb.generate({
     text: "금액 그래프"
   },
                 data: {
-                        columns: [
-        ["입고",
-                {% for data in KOR_list_c.1 %}
-        '{{data}}',
-                {% endfor %}
-	],
-        ["출고",
-                {% for data in KOR_list_c.2 %}
-        '{{data}}',
-                {% endfor %}
-	],
-                                ["기초",
-                                        {% for data in KOR_list_c.0 %}
-        '{{data}}',
-        {% endfor %}
-	],
-        ["기말",
-                {% for data in KOR_list_c.3 %}
-        '{{data}}',
-                {% endfor %}
-	],
-    ],
+                        columns: {{context.costChartCol|safe}}
         type: "bar",
                 types: {
                 기초: "line",
@@ -658,6 +568,17 @@ var chartC = bb.generate({
 
 
 		});
+
+
+
+
+
+
+
+
+
+
+
 
 
 
