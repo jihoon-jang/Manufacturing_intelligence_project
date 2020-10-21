@@ -31,27 +31,29 @@
 
 ![excel](https://user-images.githubusercontent.com/55784520/94361583-47b30e00-00f0-11eb-9c07-f25b13914399.PNG)
 
-**데이터베이스 설계(더미 값) - 수정 필요**
+**데이터베이스 설계(더미 값)**
 
-![db](https://user-images.githubusercontent.com/55784520/94361597-5dc0ce80-00f0-11eb-9e63-02324ed2c57a.PNG)
+![1](https://user-images.githubusercontent.com/55784520/96731402-30ff8e80-13f2-11eb-949a-511598fc97b6.PNG)
 
 ## 스크린샷
 
+**메인 화면 및 기본 차트(Google Chart)**
+
 ![main](https://user-images.githubusercontent.com/55784520/94361605-7204cb80-00f0-11eb-8b30-f062367d89b4.PNG)
 
-**1년치 계획, 실적**
+**1년치 계획, 실적(chart.js)**
 
 ![res](https://user-images.githubusercontent.com/55784520/94361607-77621600-00f0-11eb-8cfc-83271a67fcae.PNG)
 
-**월별 데이터 조회**
+**월별 데이터 조회(chart.js)**
 
 ![year_1](https://user-images.githubusercontent.com/55784520/94361610-7cbf6080-00f0-11eb-896c-8eaeef3a1718.PNG)
 
-**국가별 월 데이터 조회 - 수정 필요**
+**국가별 월 데이터 조회(billboard.js) - 수정 필요**
 
 ![통합](https://user-images.githubusercontent.com/55784520/95655171-6083e080-0b40-11eb-815f-f15b76458638.PNG)
 
-**GraphQL API를 이용한 차트 구성 - 개발 중**
+**GraphQL API를 이용한 차트 구성(billboard.js) - 개발 중**
 
 <u> 개발 예정 기능 </u>
 1. 쿼리 개선을 통해 API의 불필요한 컬럼 제거
