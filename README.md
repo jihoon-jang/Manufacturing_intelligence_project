@@ -1,6 +1,6 @@
 # Manufacturing_intelligence_project(수정중)
 
-## 제조지능 웹 개발 - 산학협력 프로젝트(진행중, 완성률 약 90%) 수정일 : 20.10.21
+## 제조지능 웹 개발 - 산학협력 프로젝트(진행중, 완성률 약 90%) </br>수정일 : 20.10.21
 제조공정에 python 분석을 더해 DB의 데이터를 시각화하여 보고서를 작성할 수 있는 웹 사이트 개발 프로젝트입니다.</br>
 총 5명의 팀원으로 구성되어 있습니다. 보안상 DB관련 코드 삭제했습니다. sql파일을 통해 데이터 확인 가능합니다.
 
@@ -23,7 +23,7 @@
 
 ## 사용 기술
 
-![stack](https://user-images.githubusercontent.com/55784520/94361561-23573180-00f0-11eb-9aea-80f67e769c0a.PNG)
+![stack](https://user-images.githubusercontent.com/55784520/96732891-ccddca00-13f3-11eb-9c27-610e5fca41a0.PNG)
 
 ## 데이터베이스 설계
 
