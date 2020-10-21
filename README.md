@@ -17,7 +17,7 @@
 
 ![flow](https://user-images.githubusercontent.com/55784520/94987936-d0c0be00-05a4-11eb-9feb-f69e81e197f3.PNG)
   
-## 이상 감지 적용 예
+## 이상 감지 적용 예 - 현 프로젝트의 확장
 
 ![1601980097759](https://user-images.githubusercontent.com/55784520/95190332-1cc06c80-080a-11eb-87d4-c016c1576c35.png)
 
