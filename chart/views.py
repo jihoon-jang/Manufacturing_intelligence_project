@@ -5,7 +5,7 @@ import json
 
 def chart1(request):
     import pymysql
-    dbCon = pymysql.connect()
+    dbCon = pymysql.connect('')
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -40,7 +40,7 @@ def chart1(request):
 
 def chart2(request):
     import pymysql
-    dbCon = pymysql.connect()
+    dbCon = pymysql.connect('')
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -75,7 +75,7 @@ def chart2(request):
 
 def chart3(request):
     import pymysql
-    dbCon = pymysql.connect()
+    dbCon = pymysql.connect('')
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -99,7 +99,7 @@ def chart3(request):
 def chart4(request):
     import pymysql
 
-    dbCon = pymysql.connect()
+    dbCon = pymysql.connect('')
     cursor = dbCon.cursor()
 
     with dbCon:
@@ -224,8 +224,6 @@ def chart4(request):
 def chart5(request):
     query1 = '''{
           dateInven(bsnscd:"KOR") {
-            iNo
-            bsnscd
             measures
             iDate
             iInit
@@ -248,9 +246,9 @@ def chart5(request):
     cost = []
 
     for data in rsAPI:
-        if'2020' in data[3] and 'amount' == data[2]:
+        if'2020' in data[1] and 'amount' == data[0]:
             amount.append(data)
-        elif'2020' in data[3] and 'cost' == data[2]:
+        elif'2020' in data[1] and 'cost' == data[0]:
             cost.append(data)
 
     context = {}
@@ -305,7 +303,7 @@ def chart5(request):
 
     index = 0
     for key, value in rawData[0].items():
-        if index >= 4 and index <= 8:
+        if index >= 2 and index <= 6:
             amountChartCol += '["%s",' % key
             for a in amount:
                 amountChartCol += '%s,' % a[index]
@@ -317,7 +315,7 @@ def chart5(request):
 
     index = 0
     for key, value in rawData[0].items():
-        if index >= 4 and index <= 8:
+        if index >= 2 and index <= 6:
             costChartCol += '["%s",' % key
             for a in amount:
                 costChartCol += '%s,' % a[index]
@@ -332,4 +330,117 @@ def chart5(request):
 
     return render(request, "chart5.html", {
         'context':context
+    })
+
+def chart6(request):
+    json = request.GET['data']
+    print(json)
+    #
+    # query1 = '''{
+    #       dateInven(bsnscd:"KOR") {
+    #         measures
+    #         iDate
+    #         iInit
+    #         iClose
+    #         iInput
+    #         iOutput
+    #         iRate
+    #         iPredict
+    #       }
+    #     }
+    #     '''
+    # url = 'http://127.0.0.1:8000/graphql/'
+    # r = requests.get(url, json={'query': query1})
+    # Jdata = r.json()
+    # rawData = Jdata['data']['dateInven']
+    # df=pd.DataFrame(rawData)
+    # rsAPI=[tuple(r) for r in df.to_numpy()]
+    #
+    # amount = []
+    # cost = []
+    #
+    # for data in rsAPI:
+    #     if'2020' in data[1] and 'amount' == data[0]:
+    #         amount.append(data)
+    #     elif'2020' in data[1] and 'cost' == data[0]:
+    #         cost.append(data)
+    #
+    # context = {}
+    # amountTable = '''
+    # <table id="amountTable" class="table table-striped">
+    # <thead class="thead-dark">
+    # <tr>
+    # '''
+    #
+    # for key, value in rawData[0].items():
+    #     amountTable += '<th><B>%s</B></th>' % key
+    # amountTable += '''
+    # </tr>
+    # </thead>
+    # <tbody>
+    # '''
+    # for a in amount:
+    #     amountTable += '<tr>'
+    #     for i in range(0,len(a)):
+    #         amountTable += '<td>%s</td>' % a[i]
+    #     amountTable += '</tr>'
+    # amountTable += '''
+    # </tbody>
+    # </table>
+    # '''
+    #
+    #
+    # costTable = '''
+    # <table id="costTable" class="table table-striped">
+    # <thead class="thead-dark">
+    # <tr>
+    # '''
+    #
+    # for key, value in rawData[0].items():
+    #     costTable += '<th><B>%s</B></th>' % key
+    # costTable += '''
+    # </tr>
+    # </thead>
+    # <tbody>
+    # '''
+    # for c in cost:
+    #     costTable += '<tr>'
+    #     for i in range(0,len(c)):
+    #         costTable += '<td>%s</td>' % c[i]
+    #     costTable += '</tr>'
+    # costTable += '''
+    # </tbody>
+    # </table>
+    # '''
+    #
+    # amountChartCol = "["
+    #
+    # index = 0
+    # for key, value in rawData[0].items():
+    #     if index >= 2 and index <= 6:
+    #         amountChartCol += '["%s",' % key
+    #         for a in amount:
+    #             amountChartCol += '%s,' % a[index]
+    #         amountChartCol += '],'
+    #     index += 1
+    # amountChartCol += '],'
+    #
+    # costChartCol = "["
+    #
+    # index = 0
+    # for key, value in rawData[0].items():
+    #     if index >= 2 and index <= 6:
+    #         costChartCol += '["%s",' % key
+    #         for a in amount:
+    #             costChartCol += '%s,' % a[index]
+    #         costChartCol += '],'
+    #     index += 1
+    # costChartCol += '],'
+    #
+    # context["amountTable"] = amountTable
+    # context["costTable"] = costTable
+    # context["amountChartCol"] = amountChartCol
+    # context["costChartCol"] = costChartCol
+
+    return render(request, "chart6.html", {
     })
