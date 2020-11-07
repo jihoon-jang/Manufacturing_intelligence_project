@@ -8,7 +8,7 @@
  *sql 파일에서 작업 중인 예제 데이터를 확인 가능합니다. 임시 제품 가격 100,000원*
   - 본인(팀장) : 데이터베이스 설계, 차트를 이용한 데이터 시각화(billboard.js, Chart.js, Google Chart 이용),</br>
                 GraphQL API를 통한 차트 및 테이블 제작.
-  - 팀원 1 : 마크다운 보고서 작성 기능 개발
+  - 팀원 1 : 보고서 작성 및 열람 기능 개발
   - 팀원 2 : GraphQL을 통한 API 개발
   - 팀원 3 : 현장실습으로 인해 프로젝트의 서류화
   - 팀원 4 : 현장실습으로 인해 프로젝트 동영상 등의 기록물 제작
@@ -49,10 +49,10 @@
 
 ![year_1](https://user-images.githubusercontent.com/55784520/94361610-7cbf6080-00f0-11eb-896c-8eaeef3a1718.PNG)
 
-**국가별 월 데이터 조회(billboard.js) - 수정 필요**
+**국가별 월 데이터 조회(billboard.js)**
 
 ![통합](https://user-images.githubusercontent.com/55784520/95655171-6083e080-0b40-11eb-815f-f15b76458638.PNG)
 
-**GraphQL API를 이용한 차트 구성(billboard.js) - 개발 중**
+**GraphQL API를 이용한 차트 구성(billboard.js)**
 
 ![최종 4](https://user-images.githubusercontent.com/55784520/98438473-da05f300-212d-11eb-8558-d7313d05bd67.PNG)
