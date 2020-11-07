@@ -19,7 +19,7 @@ from django.core import serializers
 import json
 
 from sqlalchemy import create_engine
-DB_URL = 'mysql+mysqldb://root:jhw1996@127.0.0.1:3307/jejodb?charset=utf8'
+DB_URL = 'mysql+mysqldb://root:jhw1996@223.194.46.212:3306/jejodb?charset=utf8'
 engine = create_engine(DB_URL)
 
 from django.views.decorators.csrf import csrf_exempt

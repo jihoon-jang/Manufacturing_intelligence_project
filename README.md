@@ -1,13 +1,13 @@
-# Manufacturing_intelligence_project(수정중)
+# Manufacturing_intelligence_project
 
-## 제조지능 웹 개발 - 산학협력 프로젝트(진행중, 완성률 약 90%) </br>수정일 : 20.10.26
+## 제조지능 웹 개발 - 산학협력 프로젝트 </br>수정일 : 20.11.07
 제조공정에 python 분석을 더해 DB의 데이터를 시각화하여 보고서를 작성할 수 있는 웹 사이트 개발 프로젝트입니다.</br>
 총 5명의 팀원으로 구성되어 있습니다. 보안상 DB관련 코드 삭제했습니다. sql파일을 통해 데이터 확인 가능합니다.
 
 ## 역할 
- *sql 파일에서 작업 중인 예제 데이터를 확인 가능합니다.*
-  - 본인(팀장) : 데이터베이스 설계, 차트를 이용한 데이터 시각화(billboard.js, Chart.js, Google Chart 등),</br>
-                GraphQL API를 통한 차트 제작, 테이블 제작.
+ *sql 파일에서 작업 중인 예제 데이터를 확인 가능합니다. 임시 제품 가격 100,000원*
+  - 본인(팀장) : 데이터베이스 설계, 차트를 이용한 데이터 시각화(billboard.js, Chart.js, Google Chart 이용),</br>
+                GraphQL API를 통한 차트 및 테이블 제작.
   - 팀원 1 : 마크다운 보고서 작성 기능 개발
   - 팀원 2 : GraphQL을 통한 API 개발
   - 팀원 3 : 현장실습으로 인해 프로젝트의 서류화
@@ -23,7 +23,7 @@
 
 ## 사용 기술
 
-![stack](https://user-images.githubusercontent.com/55784520/96732891-ccddca00-13f3-11eb-9c27-610e5fca41a0.PNG)
+![stack](https://user-images.githubusercontent.com/55784520/98438372-00775e80-212d-11eb-8f15-358557955fbc.PNG)
 
 ## 데이터베이스 설계
 
@@ -55,11 +55,4 @@
 
 **GraphQL API를 이용한 차트 구성(billboard.js) - 개발 중**
 
-<u>개발 예정 기능</u>
-1. 쿼리 개선을 통해 API의 불필요한 컬럼 제거
-2. 버튼 동작 활성화, 버튼에 적절한 쿼리로 API 요청 및 이름 변경
-3. 컬럼 값에 따른 차트 모양 변경
-4. 컬럼명 변경
-5. UI 개선 및 기타 수정(이름 등)
-
-![apply API](https://user-images.githubusercontent.com/55784520/96729475-26dc9080-13f0-11eb-92d6-4619459ea2ea.png)
+![최종 4](https://user-images.githubusercontent.com/55784520/98438473-da05f300-212d-11eb-8558-d7313d05bd67.PNG)

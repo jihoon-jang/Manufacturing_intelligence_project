@@ -17,4 +17,4 @@ class invenQuery(graphene.ObjectType):
         return inventory.objects.all()
 
     def resolve_date_inven(self, info, iDate, bsnscd):
-        return inventory.objects.filter(i_date=iDate, bsnscd=bsnscd)
+        return inventory.objects.filter(i_date__contains=iDate, bsnscd=bsnscd)

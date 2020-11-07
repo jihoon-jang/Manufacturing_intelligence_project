@@ -222,127 +222,24 @@ def chart4(request):
 
 
 def chart5(request):
-    # GraphQL API를 통한 차트 구성(임시 데이터)
-    query1 = '''{
-          dateInven(bsnscd:"KOR") {
-            measures
-            iDate
-            iInit
-            iClose
-            iInput
-            iOutput
-            iRate
-            iPredict
-          }
-        }
-        '''
-    url = 'http://127.0.0.1:8000/graphql/'
-    r = requests.get(url, json={'query': query1})
-    Jdata = r.json()
-    rawData = Jdata['data']['dateInven']
-    df=pd.DataFrame(rawData)
-    rsAPI=[tuple(r) for r in df.to_numpy()]
-
-    amount = []
-    cost = []
-
-    for data in rsAPI:
-        if'2020' in data[1] and 'amount' == data[0]:
-            amount.append(data)
-        elif'2020' in data[1] and 'cost' == data[0]:
-            cost.append(data)
-
-    context = {}
-    amountTable = '''
-    <table id="amountTable" class="table table-striped">
-    <thead class="thead-dark">
-    <tr>
-    '''
-
-    for key, value in rawData[0].items():
-        amountTable += '<th><B>%s</B></th>' % key
-    amountTable += '''
-    </tr>
-    </thead>
-    <tbody>
-    '''
-    for a in amount:
-        amountTable += '<tr>'
-        for i in range(0,len(a)):
-            amountTable += '<td>%s</td>' % a[i]
-        amountTable += '</tr>'
-    amountTable += '''
-    </tbody>
-    </table>
-    '''
-
-
-    costTable = '''
-    <table id="costTable" class="table table-striped">
-    <thead class="thead-dark">
-    <tr>
-    '''
-
-    for key, value in rawData[0].items():
-        costTable += '<th><B>%s</B></th>' % key
-    costTable += '''
-    </tr>
-    </thead>
-    <tbody>
-    '''
-    for c in cost:
-        costTable += '<tr>'
-        for i in range(0,len(c)):
-            costTable += '<td>%s</td>' % c[i]
-        costTable += '</tr>'
-    costTable += '''
-    </tbody>
-    </table>
-    '''
-
-    amountChartCol = "["
-
-    index = 0
-    for key, value in rawData[0].items():
-        if index >= 2 and index <= 6:
-            amountChartCol += '["%s",' % key
-            for a in amount:
-                amountChartCol += '%s,' % a[index]
-            amountChartCol += '],'
-        index += 1
-    amountChartCol += '],'
-
-    costChartCol = "["
-
-    index = 0
-    for key, value in rawData[0].items():
-        if index >= 2 and index <= 6:
-            costChartCol += '["%s",' % key
-            for a in amount:
-                costChartCol += '%s,' % a[index]
-            costChartCol += '],'
-        index += 1
-    costChartCol += '],'
-
-    context["amountTable"] = amountTable
-    context["costTable"] = costTable
-    context["amountChartCol"] = amountChartCol
-    context["costChartCol"] = costChartCol
-
     return render(request, "chart5.html", {
-        'context':context
     })
 
 def chart6(request):
-    #front에서 코드, 날짜 등 차트 구성에 필요한 코드를 json형태로 넘김 -> GraphQL 쿼리로 구성하여 동적으로 차트 구성.
+    context = {}
+
     json = request.GET['data']
     adict = ast.literal_eval(json)
 
     code = adict[0]['code']
     year = adict[0]['year']
 
+    title = "%s의 %s년 실적 비교" % (code, year)
+
+    convert = {"iDate":"월","iInit":"기초","iClose":"기말","iInput":"입고","iOutput":"출고","iRate":"재고회전","iPredict":"재고회전예측"}
+
     query1 = '''{
-          dateInven(bsnscd:"%s") {
+          dateInven(bsnscd:"%s", iDate:"%s") {
             measures
             iDate
             iInit
@@ -353,7 +250,7 @@ def chart6(request):
             iPredict
           }
         }
-        '''% code
+        '''% (code, year)
     url = 'http://127.0.0.1:8000/graphql/'
     r = requests.get(url, json={'query': query1})
     Jdata = r.json()
@@ -365,12 +262,11 @@ def chart6(request):
     cost = []
 
     for data in rsAPI:
-        if'2020' in data[1] and 'amount' == data[0]:
-            amount.append(data)
-        elif'2020' in data[1] and 'cost' == data[0]:
-            cost.append(data)
+        if'amount' == data[0]:
+            amount.append(data[1:len(data)])
+        elif'cost' == data[0]:
+            cost.append(data[1:len(data)])
 
-    context = {}
     amountTable = '''
     <table id="amountTable" class="table table-striped">
     <thead class="thead-dark">
@@ -378,7 +274,8 @@ def chart6(request):
     '''
 
     for key, value in rawData[0].items():
-        amountTable += '<th><B>%s</B></th>' % key
+        if key != 'measures':
+            amountTable += '<th><B>%s</B></th>' % convert.get(key)
     amountTable += '''
     </tr>
     </thead>
@@ -386,8 +283,13 @@ def chart6(request):
     '''
     for a in amount:
         amountTable += '<tr>'
+        index = 0
         for i in range(0,len(a)):
-            amountTable += '<td>%s</td>' % a[i]
+            if index == 0 :
+                amountTable += '<td>%s</td>' % a[i][4:len(a[i])]
+            else :
+                amountTable += '<td>%s</td>' % a[i]
+            index+=1
         amountTable += '</tr>'
     amountTable += '''
     </tbody>
@@ -402,7 +304,8 @@ def chart6(request):
     '''
 
     for key, value in rawData[0].items():
-        costTable += '<th><B>%s</B></th>' % key
+        if key != 'measures':
+            costTable += '<th><B>%s</B></th>' % convert.get(key)
     costTable += '''
     </tr>
     </thead>
@@ -410,8 +313,13 @@ def chart6(request):
     '''
     for c in cost:
         costTable += '<tr>'
+        index=0
         for i in range(0,len(c)):
-            costTable += '<td>%s</td>' % c[i]
+            if index == 0 :
+                costTable += '<td>%s</td>' % c[i][4:len(c[i])]
+            else :
+                costTable += '<td>%s</td>' % c[i]
+            index+=1
         costTable += '</tr>'
     costTable += '''
     </tbody>
@@ -423,9 +331,9 @@ def chart6(request):
     index = 0
     for key, value in rawData[0].items():
         if index >= 2 and index <= 6:
-            amountChartCol += '["%s",' % key
+            amountChartCol += '["%s",' % convert.get(key)
             for a in amount:
-                amountChartCol += '%s,' % a[index]
+                amountChartCol += '%s,' % a[index-1]
             amountChartCol += '],'
         index += 1
     amountChartCol += '],'
@@ -435,13 +343,16 @@ def chart6(request):
     index = 0
     for key, value in rawData[0].items():
         if index >= 2 and index <= 6:
-            costChartCol += '["%s",' % key
+            costChartCol += '["%s",' % convert.get(key)
             for a in amount:
-                costChartCol += '%s,' % a[index]
+                costChartCol += '%s,' % a[index-1]
             costChartCol += '],'
         index += 1
     costChartCol += '],'
 
+
+
+    context["title"] = title
     context["amountTable"] = amountTable
     context["costTable"] = costTable
     context["amountChartCol"] = amountChartCol
