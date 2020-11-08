@@ -37,6 +37,14 @@
 
 ## 스크린샷
 
+**GraphQL API를 이용한 차트 구성(billboard.js)**
+
+![최종 4](https://user-images.githubusercontent.com/55784520/98438473-da05f300-212d-11eb-8558-d7313d05bd67.PNG)
+
+**GraphQL API 이용 시 데이터 흐름**
+
+![dataflow](https://user-images.githubusercontent.com/55784520/98459079-6b32a380-21da-11eb-8d09-076b20e1066c.PNG)
+
 **메인 화면 및 기본 차트(Google Chart)**
 
 ![main](https://user-images.githubusercontent.com/55784520/94361605-7204cb80-00f0-11eb-8b30-f062367d89b4.PNG)
@@ -53,6 +61,3 @@
 
 ![통합](https://user-images.githubusercontent.com/55784520/95655171-6083e080-0b40-11eb-815f-f15b76458638.PNG)
 
-**GraphQL API를 이용한 차트 구성(billboard.js)**
-
-![최종 4](https://user-images.githubusercontent.com/55784520/98438473-da05f300-212d-11eb-8558-d7313d05bd67.PNG)
